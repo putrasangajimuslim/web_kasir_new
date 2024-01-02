@@ -9,25 +9,21 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    public function index() {
+    public function index()
+    {
 
         $user = Auth::user();
 
-        $jmlHadir = Absensi::where('keterangan', '=', 'hadir');
         $jmlkaryawan = User::where('role', '!=', 'admin');
 
         $isAdminAccess = false;
 
         if ($user->role == 'admin') {
             $isAdminAccess = true;
-        } else {
-            $kodeKaryawan = $user->kode_karyawan;
-
-            $jmlHadir = $jmlHadir->where('kode_karyawan', $kodeKaryawan)->where('keterangan', '=', 'hadir');
         }
 
-        $jmlHadir = $jmlHadir->count();
-        $jmlkaryawan = $jmlkaryawan->count();
+        $jmlHadir = 0;
+        $jmlkaryawan = 0;
 
         return view('admin.dashboard', ['jmlHadir' => $jmlHadir, 'jmlkaryawan' => $jmlkaryawan, 'isAdminAccess' => $isAdminAccess]);
     }

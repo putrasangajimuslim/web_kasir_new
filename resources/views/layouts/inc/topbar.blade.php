@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
     <div style="margin-left: 24px; display: flex;">
-        <p style="font-size: 20px; margin: auto 20px">Sistem Penggajian Notaris Indah Khairunisa</p>
-        <img src="{{ asset('img/garuda.jpg') }}" style="width: 40px;">
+        <p style="font-size: 20px; margin: auto 20px">Ecommerce</p>
+        <img src="{{ asset('img/store.png') }}" style="width: 40px;">
     </div>    
 
     <!-- Topbar Navbar -->

@@ -1,4 +1,4 @@
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     {{-- <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html"> --}}
@@ -28,8 +28,8 @@
 
         <li class="nav-item {{ Route::currentRouteName() === 'kehadiran.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('kehadiran.index')}}">
-                <i class="fas fa-fw fa-book-open"></i>
-                <span>Kehadiran</span></a>
+                <i class="fas fa-fw fa-tag"></i>
+                <span>Product</span></a>
         </li>
         {{-- <li class="nav-item {{ Route::currentRouteName() === 'users.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('users.index')}}">
@@ -37,7 +37,7 @@
                 <span>Karyawan</span></a>
         </li> --}}
 
-        <li class="nav-item {{ Route::currentRouteName() === 'kelolagaji.index' ? 'active' : '' }}">
+        {{-- <li class="nav-item {{ Route::currentRouteName() === 'kelolagaji.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('kelolagaji.index')}}">
                 <i class="fas fa-fw fa-cogs"></i>
                 <span>Kelola Gaji</span></a>
@@ -47,7 +47,7 @@
             <a class="nav-link" href="{{ route('laporan.index')}}">
                 <i class="fas fa-fw fa-cogs"></i>
                 <span>Laporan</span></a>
-        </li>
+        </li> --}}
     @else
         <li class="nav-item {{ Route::currentRouteName() === 'dashboard' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('dashboard')}}">
@@ -55,11 +55,11 @@
                 <span>Dashboard</span></a>
         </li>
 
-        <li class="nav-item {{ Route::currentRouteName() === 'kehadiran.index' ? 'active' : '' }}">
+        {{-- <li class="nav-item {{ Route::currentRouteName() === 'kehadiran.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('kehadiran.index')}}">
                 <i class="fas fa-fw fa-book-open"></i>
                 <span>Kehadiran</span></a>
-        </li>
+        </li> --}}
         <li class="nav-item {{ Route::currentRouteName() === 'laporan.detail-slipgaji' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('laporan.detail-slipgaji')}}">
                 <i class="fas fa-fw fa-cogs"></i>
