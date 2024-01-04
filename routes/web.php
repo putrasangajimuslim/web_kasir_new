@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\KehadiranController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\KelolaGajiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\UserController;
@@ -22,22 +22,22 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [AuthController::class, 'showLoginForm']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-// Route::get('dashboard', [KehadiranController::class, 'index'])->name('dashboard');
+// Route::get('dashboard', [ProductController::class, 'index'])->name('dashboard');
 
-Route::post('cek-kehadiran', [KehadiranController::class, 'cekKehadiran'])->name('cek-kehadiran');
-Route::post('rekam-kehadiran', [KehadiranController::class, 'rekamKehadiran'])->name('rekam-kehadiran');
+Route::post('cek-kehadiran', [ProductController::class, 'cekKehadiran'])->name('cek-kehadiran');
+Route::post('rekam-kehadiran', [ProductController::class, 'rekamKehadiran'])->name('rekam-kehadiran');
 
 Route::middleware(['isLogin'])->group(function () {
 
     Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
 
-    Route::prefix('kehadiran')->as('kehadiran.')->group(function () {
-        Route::get('/', [KehadiranController::class, 'index'])->name('index');
-        Route::get('create', [KehadiranController::class, 'create'])->name('create');
-        Route::post('store', [KehadiranController::class, 'store'])->name('store');
-        Route::get('edit/{id}', [KehadiranController::class, 'edit'])->name('edit');
-        Route::post('update', [KehadiranController::class, 'update'])->name('update');
-        Route::get('destroy{id}', [KehadiranController::class, 'destroy'])->name('destroy');
+    Route::prefix('products')->as('products.')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('index');
+        Route::get('create', [ProductController::class, 'create'])->name('create');
+        Route::post('store', [ProductController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [ProductController::class, 'edit'])->name('edit');
+        Route::post('update', [ProductController::class, 'update'])->name('update');
+        Route::get('destroy{id}', [ProductController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('users')->as('users.')->middleware(['admin'])->group(function () {

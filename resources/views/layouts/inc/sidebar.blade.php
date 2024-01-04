@@ -26,10 +26,10 @@
                 <span>Dashboard</span></a>
         </li>
 
-        <li class="nav-item {{ Route::currentRouteName() === 'kehadiran.index' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('kehadiran.index')}}">
+        <li class="nav-item {{ Route::currentRouteName() === 'products.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('products.index')}}">
                 <i class="fas fa-fw fa-tag"></i>
-                <span>Product</span></a>
+                <span>Barang</span></a>
         </li>
         {{-- <li class="nav-item {{ Route::currentRouteName() === 'users.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('users.index')}}">
