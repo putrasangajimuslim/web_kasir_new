@@ -3,8 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\KelolaGajiController;
-use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,20 +49,22 @@ Route::middleware(['isLogin'])->group(function () {
         Route::get('destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('kelolagaji')->as('kelolagaji.')->middleware(['admin'])->group(function () {
-        Route::get('/', [KelolaGajiController::class, 'index'])->name('index');
-        Route::get('edit/{id}', [KelolaGajiController::class, 'edit'])->name('edit');
-        Route::post('update', [KelolaGajiController::class, 'update'])->name('update');
-        Route::get('destroy/{id}', [KelolaGajiController::class, 'destroy'])->name('destroy');
+    Route::prefix('kategori')->as('kategori.')->middleware(['admin'])->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('create', [CategoryController::class, 'create'])->name('create');
+        Route::post('store', [CategoryController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [CategoryController::class, 'edit'])->name('edit');
+        Route::post('update', [CategoryController::class, 'update'])->name('update');
+        Route::get('destroy/{id}', [CategoryController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('laporan')->as('laporan.')->group(function () {
-        Route::get('/', [LaporanController::class, 'index'])->name('index');
-        Route::get('detail-slipgaji', [LaporanController::class, 'detailSlipGaji'])->name('detail-slipgaji');
-        Route::get('detail-rekapgaji', [LaporanController::class, 'detailRekapGaji'])->name('detail-rekapgaji');
-        Route::get('print/{id}', [LaporanController::class, 'print'])->name('print');
-        Route::get('detail-periode-rekapgaji/{bln}/{thn}', [LaporanController::class, 'detailPeriodeRekapGajiPeriode'])->name('detail-periode-rekapgaji');
-        Route::get('print-detail-periode-rekapgaji/{bln}/{thn}', [LaporanController::class, 'printPeriodeRekapGajiPeriode'])->name('print-detail-periode-rekapgaji');
-    });
+    // Route::prefix('laporan')->as('laporan.')->group(function () {
+    //     Route::get('/', [LaporanController::class, 'index'])->name('index');
+    //     Route::get('detail-slipgaji', [LaporanController::class, 'detailSlipGaji'])->name('detail-slipgaji');
+    //     Route::get('detail-rekapgaji', [LaporanController::class, 'detailRekapGaji'])->name('detail-rekapgaji');
+    //     Route::get('print/{id}', [LaporanController::class, 'print'])->name('print');
+    //     Route::get('detail-periode-rekapgaji/{bln}/{thn}', [LaporanController::class, 'detailPeriodeRekapGajiPeriode'])->name('detail-periode-rekapgaji');
+    //     Route::get('print-detail-periode-rekapgaji/{bln}/{thn}', [LaporanController::class, 'printPeriodeRekapGajiPeriode'])->name('print-detail-periode-rekapgaji');
+    // });
 
 });

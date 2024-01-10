@@ -59,7 +59,7 @@
                                   <select name="role" id="role" class="form-control">
                                     <option value="">--Please Select Role --</option>
                                     <option value="admin">Admin</option>
-                                    <option value="user">User</option>
+                                    <option value="kasir">Kasir</option>
                                   </select>
                                   @error('role')
                                       <span style="color: red;">Silahkan Pilih Role</span>

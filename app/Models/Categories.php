@@ -10,7 +10,7 @@ class Categories extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'category';
+    protected $table = 'kategori';
 
     protected $fillable = [
         'nama',

@@ -35,7 +35,7 @@
                 <form action="{{ route('products.store') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label for="InputNamaBarang">Nama Barang </label>
+                        <label for="InputNamaBarang">Nama Barang <span style="color: red">*</span></label>
                         <input type="text" class="form-control" id="InputNamaBarang" name="name" value="{{ old('name') }}">
                         @error('name')
                             <span style="color: red;">Silahkan Isi Nama Barang</span>
@@ -43,63 +43,64 @@
                     </div>
                     <div class="form-group">
                         <label for="InputCategory">Kategori <span style="color: red">*</span></label>
-                        <select name="id_kategori" id="InputCategory" class="form-control">
-                            <option value="">-- Please Select Kategori --</option>
+                        <select name="kategori_id" id="InputCategory" class="form-control">
+                            <option value="">-- Silahkan Pilih Kategori --</option>
                             @foreach ($categories as $category)
-                                @if (old('id_kategori') === $category->kode_karyawan)
-                                    <option value="{{ $category->kode_karyawan }}" selected>{{ $category->kode_karyawan }} - {{ $category->nama }}</option>
+                                @if (old('kategori_id') == $category->id)
+                                    <option value="{{ $category->id }}" selected>{{ $category->nama }}</option>
                                 @else
-                                    <option value="{{ $category->kode_karyawan }}">{{ $category->kode_karyawan }} - {{ $category->nama }}</option>
+                                    <option value="{{ $category->id }}">{{ $category->nama }}</option>
                                 @endif
                             @endforeach
                         </select>
-                        @error('kode_karyawan')
-                            <span style="color: red;">Silahkan Pilih Kode Karyawan</span>
+                        @error('kategori_id')
+                            <span style="color: red;">Silahkan Pilih Kategori</span>
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="InputMerk">Merk </label>
+                        <label for="InputMerk">Merk <span style="color: red">*</span></label>
                         <input type="text" class="form-control" id="InputMerk" name="merk" value="{{ old('merk') }}">
                         @error('merk')
                             <span style="color: red;">Silahkan Isi Merk</span>
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="InputHargaBeli">Harga Beli </label>
-                        <input type="number" class="form-control" id="InputHargaBeli" name="harga_beli" value="{{ old('harga_beli') }}">
+                        <label for="InputHargaBeli">Harga Beli <span style="color: red">*</span></label>
+                        <input type="number" class="form-control" id="InputHargaBeli" name="harga_beli" value="0">
                         @error('harga_beli')
-                            <span style="color: red;">Silahkan Harga Beli</span>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="InputHargajual">Harga Jual </label>
-                        <input type="number" class="form-control" id="InputHargajual" name="harga_jual" value="{{ old('harga_jual') }}">
-                        @error('harga_jual')
-                            <span style="color: red;">Silahkan Harga Jual</span>
+                            <span style="color: red;">Silahkan Isi Harga Beli</span>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="InputMargin">Margin Keuntungan</label>
-                        <input type="text" class="form-control" id="InputMargin" name="margin_keuntungan" value="{{ old('margin_keuntungan') }}">
+                        <label for="InputMargin">Margin Keuntungan <span style="color: red">*</span></label>
+                        <input type="text" class="form-control" id="InputMargin" name="margin_keuntungan" value="0">
                         @error('margin_keuntungan')
-                            <span style="color: red;">Silahkan Margin Keuntungan</span>
+                            <span style="color: red;">Silahkan Isi Margin Keuntungan</span>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="InputSatuanbarang">Satuan Barang</label>
+                        <label for="InputHargajual">Harga Jual <span style="color: red">*</span></label>
+                        <input type="number" class="form-control" id="InputHargajual" name="harga_jual" value="0" readonly>
+                        @error('harga_jual')
+                            <span style="color: red;">Silahkan Isi Harga Jual</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="InputSatuanbarang">Satuan Barang <span style="color: red">*</span></label>
                         <input type="text" class="form-control" id="InputSatuanbarang" name="satuan_barang" value="{{ old('satuan_barang') }}">
                         @error('satuan_barang')
-                            <span style="color: red;">Silahkan Satuan Barang</span>
+                            <span style="color: red;">Silahkan Isi Satuan Barang</span>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="InputStok">Stok</label>
-                        <input type="text" class="form-control" id="InputStok" name="stok" value="{{ old('stok') }}">
+                        <label for="InputStok">Stok <span style="color: red">*</span></label>
+                        <input type="number" class="form-control" id="InputStok" name="stok" value="{{ old('stok', 0) }}">
                         @error('stok')
-                            <span style="color: red;">Silahkan Stok</span>
+                            <span style="color: red;">Silahkan Isi Stok</span>
                         @enderror
                     </div>
                     
@@ -109,4 +110,37 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function() {
+            let hargaBeli = 0;
+            let margin = 0;
+
+            $('#InputSatuanbarang').on('input', function() {
+                var inputValue = $(this).val();
+                var sanitizedValue = inputValue.replace(/[^a-zA-Z]/g, '');
+                $(this).val(sanitizedValue);
+            });
+
+            $('#InputHargaBeli').on('input', function() {
+                hargaBeli = parseFloat($(this).val()) || 0;
+                updateHargaJual();
+            });
+
+            $('#InputMargin').on('input', function() {
+                margin = parseFloat($(this).val()) || 0;
+                updateHargaJual();
+            });
+
+            function updateHargaJual() {
+                let keuntungan = hargaBeli * (margin / 100);
+                let hargaJual = hargaBeli + keuntungan;
+
+                $("#InputHargajual").val(hargaJual);
+            }
+        });
+
+    </script>
 @endsection

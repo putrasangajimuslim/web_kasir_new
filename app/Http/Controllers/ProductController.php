@@ -14,159 +14,80 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $user = Auth::user();
 
         $isAdminAccess = false;
 
         $products = [];
-    
+
         if ($user->role == 'admin') {
-            $products = Products::all();
-            // $kehadirans = Absensi::all();
-
-            // foreach ($kehadirans as $kehadiran) {
-            //     $jamMasuk = '';
-            //     $jamKeluar = '';
-
-            //     if (!empty($kehadiran->jam_masuk)) {
-            //         $jamMasuk = Carbon::parse($kehadiran->jam_masuk)->format('H:i:s');
-            //     }
-
-            //     if (!empty($kehadiran->jam_keluar)) {
-            //         $jamKeluar = Carbon::parse($kehadiran->jam_keluar)->format('H:i:s');
-            //     }
-
-            //     // $createdAt = $kehadiran->jam_masuk ? Carbon::parse($kehadiran->jam_masuk)->format('Y-m-d') : Carbon::parse($kehadiran->jam_keluar)->format('Y-m-d');
-            //     $createdAt = $kehadiran->jam_masuk ? Carbon::parse($kehadiran->jam_masuk)->format('Y-m-d') : ($kehadiran->jam_keluar ? Carbon::parse($kehadiran->jam_keluar)->format('Y-m-d') : Carbon::parse($kehadiran->created_at)->format('Y-m-d'));
-
-            //     $kehadiran->jam_masuk = $jamMasuk;
-            //     $kehadiran->jam_keluar = $jamKeluar;
-            //     $kehadiran->tgl = $createdAt;
-            // }
+            $products = Products::with('kategori')->get();
             $isAdminAccess = true;
-        } else {
-            // $kodeKaryawan = $user->kode_karyawan;
-            // $kehadirans = Absensi::where('kode_karyawan', $kodeKaryawan)->get();
-
-            // foreach ($kehadirans as $kehadiran) {
-            //     $jamMasuk = '';
-            //     $jamKeluar = '';
-
-            //     if (!empty($kehadiran->jam_masuk)) {
-            //         $jamMasuk = Carbon::parse($kehadiran->jam_masuk)->format('H:i:s');
-            //     }
-
-            //     if (!empty($kehadiran->jam_keluar)) {
-            //         $jamKeluar = Carbon::parse($kehadiran->jam_keluar)->format('H:i:s');
-            //     }
-
-            //     $createdAt = $kehadiran->jam_masuk ? Carbon::parse($kehadiran->jam_masuk)->format('Y-m-d') : ($kehadiran->jam_keluar ? Carbon::parse($kehadiran->jam_keluar)->format('Y-m-d') : Carbon::parse($kehadiran->created_at)->format('Y-m-d'));
-
-            //     $kehadiran->jam_masuk = $jamMasuk;
-            //     $kehadiran->jam_keluar = $jamKeluar;
-            //     $kehadiran->tgl = $createdAt;
-            // }
         }
 
         return view('admin.barang.index', ['isAdminAccess' => $isAdminAccess, 'products' => $products]);
     }
 
-    public function create() {
+    public function create()
+    {
         $categories = Categories::all();
 
         return view('admin.barang.create', ['categories' => $categories]);
     }
 
-    public function store(Request $request) {
-    //     $validateData = $request->validate([
-    //         'kode_karyawan' => 'required',
-    //    ]);
+    public function store(Request $request)
+    {
+        $validateData = $request->validate([
+            'name' => 'required',
+            'kategori_id' => 'required',
+            'merk' => 'required',
+            'harga_beli' => 'required',
+            'margin_keuntungan' => 'required',
+            'satuan_barang' => 'required',
+            'stok' => 'required',
+        ]);
 
-    //    $month = date('m');
-    //    $years = date('Y');
+        $cekBarang = Products::where('nama_barang', $request->name)
+            ->where('merk', $request->merk)
+            ->first();
 
-    //     $absen = new Absensi();
-    //     $absen->kode_karyawan = $request->kode_karyawan;
-    //     $absen->jam_masuk = $request->jam_masuk;
-    //     $absen->jam_keluar = $request->jam_keluar;
+        $latestKodeBarang = Products::latest()->first();
 
-    //     if (empty($request->keterangan)) {
+        $kodeBarang = empty($latestKodeBarang) ? 'BR001' : $this->generateKodeBarang($latestKodeBarang->kode_barang);
 
-    //         $absen->keterangan = 'hadir';
+        if (empty($cekBarang)) {
+            $barang = new Products();
+            $barang->kode_barang = $kodeBarang;
+            $barang->kategori_id = $request->kategori_id;
+            $barang->nama_barang = $request->name;
+            $barang->merk = $request->merk;
+            $barang->harga_beli = $request->harga_beli;
+            $barang->harga_jual = $request->harga_jual;
+            $barang->margin_keuntungan = $request->margin_keuntungan;
+            $barang->satuan_barang = $request->satuan_barang;
+            $barang->stok = $request->stok;
+            $barang->save();
 
-    //         $cekKelola = Kelola::where('kode_karyawan', $request->kode_karyawan)
-    //                                 ->where('bulan', $month)
-    //                                 ->where('tahun', $years)
-    //                                 ->first();
+            return redirect()->route('products.index')->with('message', 'Berhasil Menyimpan Barang');
+        } else {
 
-    //         $user = User::where('kode_karyawan', $request->kode_karyawan)->with('jabatan')->first();
-            
-    //         if ($cekKelola) {
-    //             // Data sudah ada, lakukan pembaruan
-    //             $cekKelola->update([
-    //                 'jml_kehadiran' => $cekKelola->jml_kehadiran + 1,
-    //             ]);
-    //         } else {
-    //             // Data belum ada, lakukan penyisipan
-    //             $gajiBersih = ($user->jabatan->gaji_pokok + $user->jabatan->tunjangan_transport - $user->jabatan->potongan);
-
-    //             Kelola::create([
-    //                 'kode_karyawan' => $request->kode_karyawan,
-    //                 'bulan' => $month,
-    //                 'tahun' => $years,
-    //                 'jml_kehadiran' => 1,
-    //                 'jml_alfa' => 0,
-    //                 'gaji_pokok' => $user->jabatan->gaji_pokok,
-    //                 'bonus' => $user->jabatan->bonus,
-    //                 'tunjangan_transport' => $user->jabatan->tunjangan_transport,
-    //                 'potongan' => $user->jabatan->potongan,
-    //                 'gaji_bersih' => $gajiBersih,
-    //             ]);
-    //         }
-    //     } else {
-    //         $absen->keterangan = $request->keterangan;
-
-    //         $kelola = Kelola::where('kode_karyawan', $request->kode_karyawan)
-    //                             ->where('bulan', $month)
-    //                             ->where('tahun', $years)
-    //                             ->first();
-
-    //         $user = User::where('kode_karyawan', $kelola->kode_karyawan)->first();
-
-    //         $potonganAlfa = PotonganAlfa::where('id_jabatan', $user->id_jabatan)->first();
-
-    //         if ($request->keterangan == 'alfa') {
-                
-    //             $accumulationAlfa = $kelola->gaji_bersih - intval($potonganAlfa->jml);
-    //             $kelola->gaji_bersih = $accumulationAlfa;
-    //             if (!empty($kelola->jml_alfa)) {
-    //                 $jmlAlfaInt = intval($kelola->jml_alfa); // Menggunakan intval() untuk mengonversi string menjadi integer
-    //                 $jmlAlfaInt++; 
-
-    //                 $kelola->jml_alfa = $jmlAlfaInt;
-
-    //             } else {
-    //                 $kelola->jml_alfa = 1;
-    //             }
-                
-    //             $kelola->save();
-    //         }
-    //     }
-
-    //     $absen->save();
-
-    //     return redirect()->back()->with('message', 'Berhasil Rekam Kehadiran');
+            return redirect()->back()->with('error', 'Maaf Untuk Data Barang Tersebut Sudah Ada');
+        }
     }
 
-    public function edit($id) {
-        // $kodekaryawans = User::get();
-        // $absen = Absensi::where('id', $id)->first();
+    public function edit($id)
+    {
+        $barang = Products::where('id', $id)->first();
 
-        // return view('admin.absen.edit', ['absen' => $absen, 'kodekaryawans' => $kodekaryawans]);
+        $categories = Categories::all();
+
+        return view('admin.barang.edit', ['barang' => $barang, 'categories' => $categories]);
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         // $id = $request->id_absen;
         // $kodeKaryawan = $request->kode_karyawan;
         // $jamMasuk = $request->jam_masuk;
@@ -184,7 +105,7 @@ class ProductController extends Controller
         //                             ->first();
 
         //     $user = User::where('kode_karyawan', $kodeKaryawan)->with('jabatan')->first();
-            
+
         //     if ($cekKelola) {
         //         // Data sudah ada, lakukan pembaruan
         //         $cekKelola->update([
@@ -251,9 +172,31 @@ class ProductController extends Controller
         // $absen->save();
 
         // return redirect()->route('kehadiran.index')->with('message', 'Berhasil Update Absensi' . $kodeKaryawan);
+
+        $validateData = $request->validate([
+            'name' => 'required',
+            'kategori_id' => 'required',
+            'merk' => 'required',
+            'harga_beli' => 'required',
+            'margin_keuntungan' => 'required',
+        ]);
+
+        $barang = Products::where('id', $request->product_id)->first();
+        $barang->kategori_id = $request->kategori_id;
+        $barang->nama_barang = $request->name;
+        $barang->merk = $request->merk;
+        $barang->harga_beli = $request->harga_beli;
+        $barang->harga_jual = $request->harga_jual;
+        $barang->margin_keuntungan = $request->margin_keuntungan;
+        $barang->satuan_barang = $request->satuan_barang;
+        $barang->stok = $request->stok;
+        $barang->save();
+
+        return redirect()->route('products.edit', ['id' => $request->product_id])->with('message', 'Berhasil Mengupdate Barang');
     }
 
-    public function cekKehadiran(Request $request) {
+    public function cekKehadiran(Request $request)
+    {
 
         $kodeKaryawan = $request->kode_karyawan;
 
@@ -276,7 +219,8 @@ class ProductController extends Controller
         ]);
     }
 
-    public function rekamKehadiran(Request $request) {
+    public function rekamKehadiran(Request $request)
+    {
 
         $kodeKaryawan = $request->replace_kode_karyawan;
         $typeRekam = $request->type_rekam;
@@ -294,12 +238,12 @@ class ProductController extends Controller
             $typeMessage = 'Clock In';
 
             $cekKelola = Kelola::where('kode_karyawan', $kodeKaryawan)
-                                    ->where('bulan', $month)
-                                    ->where('tahun', $years)
-                                    ->first();
+                ->where('bulan', $month)
+                ->where('tahun', $years)
+                ->first();
 
             $user = User::where('kode_karyawan', $kodeKaryawan)->with('jabatan')->first();
-            
+
             if ($cekKelola) {
                 // Data sudah ada, lakukan pembaruan
                 $cekKelola->update([
@@ -336,9 +280,23 @@ class ProductController extends Controller
         return redirect()->back()->with('message', 'Berhasil Rekam Kehadiran ' . $typeMessage);
     }
 
-    public function destroy($id) {
-        Absensi::find($id)->delete();
+    public function destroy($id)
+    {
+        Products::find($id)->delete();
 
-        return redirect()->route('kehadiran.index')->with('message', 'Berhasil Delete Absensi');
+        return redirect()->route('products.index')->with('message', 'Berhasil Delete Barang');
+    }
+
+    public function generateKodeBarang($lastCode)
+    {
+        $lastNumber = (int) substr($lastCode, 2);
+
+        // Menambahkan 1 ke angka terakhir
+        $nextNumber = $lastNumber + 1;
+
+        // Membuat kode dengan format "BR" dan menggunakan sprintf untuk menambahkan angka dengan format 3 digit (misal: BR001)
+        $nextCode = sprintf("BR%03d", $nextNumber);
+
+        return $nextCode;
     }
 }

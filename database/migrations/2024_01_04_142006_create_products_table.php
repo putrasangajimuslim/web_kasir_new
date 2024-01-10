@@ -13,10 +13,10 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('barang', function (Blueprint $table) {
             $table->id();
-            $table->string('id_barang')->nullable();
-            $table->integer('id_kategori')->nullable();
+            $table->string('kode_barang')->nullable();
+            $table->integer('kategori_id')->nullable();
             $table->string('nama_barang')->nullable();
             $table->string('merk')->nullable();
             $table->string('harga_beli')->nullable();

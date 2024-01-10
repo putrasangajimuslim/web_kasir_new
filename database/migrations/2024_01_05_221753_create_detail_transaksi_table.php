@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCategoryTable extends Migration
+class CreateDetailTransaksiTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,13 @@ class CreateCategoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('kategori', function (Blueprint $table) {
+        Schema::create('detail_transaksi', function (Blueprint $table) {
             $table->id();
-            $table->string('nama')->nullable();
+            $table->integer('transaksi_id')->nullable();
+            $table->string('kode_barang')->nullable();
+            $table->integer('jumlah')->nullable();
+            $table->string('harga_satuan')->nullable();
+            $table->string('subtotal')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,6 +32,6 @@ class CreateCategoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('category');
+        Schema::dropIfExists('detail_transaksi');
     }
 }

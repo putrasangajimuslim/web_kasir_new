@@ -10,11 +10,11 @@ class Products extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'products';
+    protected $table = 'barang';
 
     protected $fillable = [
-        'id_barang',
-        'id_kategori',
+        'kode_barang',
+        'kategori_id',
         'nama_barang',
         'merk',
         'harga_beli',
@@ -23,4 +23,9 @@ class Products extends Model
         'satuan_barang',
         'stok',
     ];
+
+    public function kategori()
+    {
+        return $this->belongsTo(Categories::class, 'kategori_id');
+    }
 }

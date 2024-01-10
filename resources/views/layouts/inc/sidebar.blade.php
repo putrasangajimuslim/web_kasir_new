@@ -31,6 +31,13 @@
                 <i class="fas fa-fw fa-tag"></i>
                 <span>Barang</span></a>
         </li>
+
+        <li class="nav-item {{ Route::currentRouteName() === 'kategori.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('kategori.index')}}">
+                <i class="fas fa-fw fa-tag"></i>
+                <span>Kategori</span></a>
+        </li>
+
         {{-- <li class="nav-item {{ Route::currentRouteName() === 'users.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('users.index')}}">
                 <i class="fas fa-fw fa-users"></i>
@@ -60,11 +67,6 @@
                 <i class="fas fa-fw fa-book-open"></i>
                 <span>Kehadiran</span></a>
         </li> --}}
-        <li class="nav-item {{ Route::currentRouteName() === 'laporan.detail-slipgaji' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('laporan.detail-slipgaji')}}">
-                <i class="fas fa-fw fa-cogs"></i>
-                <span>Laporan</span></a>
-        </li>
     @endif
 
     <!-- Divider -->
