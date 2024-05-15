@@ -19,7 +19,7 @@ class CategoryController extends Controller
         $categories = [];
 
         if ($user->role == 'admin') {
-            $categories = Categories::with('kategori')->get();
+            $categories = Categories::get();
             $isAdminAccess = true;
         }
 

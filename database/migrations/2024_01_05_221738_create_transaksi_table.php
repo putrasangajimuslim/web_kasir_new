@@ -16,8 +16,11 @@ class CreateTransaksiTable extends Migration
         Schema::create('transaksi', function (Blueprint $table) {
             $table->id();
             $table->dateTime('tgl_transaksi')->nullable();
-            $table->string('total_harga')->nullable();
-            $table->integer('member_id')->nullable();
+            $table->string('nama_barang', 30)->nullable();
+            $table->double('total_harga')->nullable();
+            $table->integer('qty')->nullable();
+            $table->double('harga')->nullable();
+            $table->integer('kasir_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

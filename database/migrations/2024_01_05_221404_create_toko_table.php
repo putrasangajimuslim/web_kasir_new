@@ -13,13 +13,13 @@ class CreateTokoTable extends Migration
      */
     public function up()
     {
-        Schema::create('toko', function (Blueprint $table) {
-            $table->id();
-            $table->string('nm_toko')->nullable();
-            $table->longText('alamat')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('toko', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('nm_toko')->nullable();
+        //     $table->longText('alamat')->nullable();
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
     }
 
     /**
@@ -29,6 +29,6 @@ class CreateTokoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('toko');
+        // Schema::dropIfExists('toko');
     }
 }

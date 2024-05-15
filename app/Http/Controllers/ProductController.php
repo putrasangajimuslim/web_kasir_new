@@ -23,7 +23,7 @@ class ProductController extends Controller
         $products = [];
 
         if ($user->role == 'admin') {
-            $products = Products::with('kategori')->get();
+            $products = Products::get();
             $isAdminAccess = true;
         }
 
@@ -32,21 +32,18 @@ class ProductController extends Controller
 
     public function create()
     {
-        $categories = Categories::all();
-
-        return view('admin.barang.create', ['categories' => $categories]);
+        return view('admin.barang.create');
     }
 
     public function store(Request $request)
     {
         $validateData = $request->validate([
             'name' => 'required',
-            'kategori_id' => 'required',
             'merk' => 'required',
             'harga_beli' => 'required',
-            'margin_keuntungan' => 'required',
-            'satuan_barang' => 'required',
+            'harga_jual' => 'required',
             'stok' => 'required',
+            'masa_exp' => 'required',
         ]);
 
         $cekBarang = Products::where('nama_barang', $request->name)
@@ -55,19 +52,20 @@ class ProductController extends Controller
 
         $latestKodeBarang = Products::latest()->first();
 
-        $kodeBarang = empty($latestKodeBarang) ? 'BR001' : $this->generateKodeBarang($latestKodeBarang->kode_barang);
+        $kodeBarang = empty($latestKodeBarang) ? 'BR01' : $this->generateKodeBarang($latestKodeBarang->kode_barang);
 
         if (empty($cekBarang)) {
             $barang = new Products();
             $barang->kode_barang = $kodeBarang;
-            $barang->kategori_id = $request->kategori_id;
+            // $barang->kategori_id = $request->kategori_id;
             $barang->nama_barang = $request->name;
             $barang->merk = $request->merk;
             $barang->harga_beli = $request->harga_beli;
             $barang->harga_jual = $request->harga_jual;
-            $barang->margin_keuntungan = $request->margin_keuntungan;
-            $barang->satuan_barang = $request->satuan_barang;
+            // $barang->margin_keuntungan = $request->margin_keuntungan;
+            // $barang->satuan_barang = $request->satuan_barang;
             $barang->stok = $request->stok;
+            $barang->date_expired = $request->masa_exp;
             $barang->save();
 
             return redirect()->route('products.index')->with('message', 'Berhasil Menyimpan Barang');
@@ -175,21 +173,22 @@ class ProductController extends Controller
 
         $validateData = $request->validate([
             'name' => 'required',
-            'kategori_id' => 'required',
             'merk' => 'required',
             'harga_beli' => 'required',
-            'margin_keuntungan' => 'required',
+            'harga_jual' => 'required',
+            'masa_exp' => 'required',
         ]);
 
         $barang = Products::where('id', $request->product_id)->first();
-        $barang->kategori_id = $request->kategori_id;
+        // $barang->kategori_id = $request->kategori_id;
         $barang->nama_barang = $request->name;
         $barang->merk = $request->merk;
         $barang->harga_beli = $request->harga_beli;
         $barang->harga_jual = $request->harga_jual;
-        $barang->margin_keuntungan = $request->margin_keuntungan;
-        $barang->satuan_barang = $request->satuan_barang;
+        // $barang->margin_keuntungan = $request->margin_keuntungan;
+        // $barang->satuan_barang = $request->satuan_barang;
         $barang->stok = $request->stok;
+        $barang->date_expired = $request->masa_exp;
         $barang->save();
 
         return redirect()->route('products.edit', ['id' => $request->product_id])->with('message', 'Berhasil Mengupdate Barang');

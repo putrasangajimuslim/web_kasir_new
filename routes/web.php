@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +24,8 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 // Route::get('dashboard', [ProductController::class, 'index'])->name('dashboard');
 
-Route::post('cek-kehadiran', [ProductController::class, 'cekKehadiran'])->name('cek-kehadiran');
-Route::post('rekam-kehadiran', [ProductController::class, 'rekamKehadiran'])->name('rekam-kehadiran');
+// Route::post('cek-kehadiran', [ProductController::class, 'cekKehadiran'])->name('cek-kehadiran');
+// Route::post('rekam-kehadiran', [ProductController::class, 'rekamKehadiran'])->name('rekam-kehadiran');
 
 Route::middleware(['isLogin'])->group(function () {
 
@@ -56,6 +57,15 @@ Route::middleware(['isLogin'])->group(function () {
         Route::get('edit/{id}', [CategoryController::class, 'edit'])->name('edit');
         Route::post('update', [CategoryController::class, 'update'])->name('update');
         Route::get('destroy/{id}', [CategoryController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('transaksi')->as('transaksi.')->middleware(['admin'])->group(function () {
+        Route::get('/', [TransaksiController::class, 'index'])->name('index');
+        Route::get('create', [TransaksiController::class, 'create'])->name('create');
+        Route::post('store', [TransaksiController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [TransaksiController::class, 'edit'])->name('edit');
+        Route::post('update', [TransaksiController::class, 'update'])->name('update');
+        Route::get('destroy/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
     });
 
     // Route::prefix('laporan')->as('laporan.')->group(function () {

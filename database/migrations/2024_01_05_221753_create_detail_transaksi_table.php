@@ -16,10 +16,11 @@ class CreateDetailTransaksiTable extends Migration
         Schema::create('detail_transaksi', function (Blueprint $table) {
             $table->id();
             $table->integer('transaksi_id')->nullable();
-            $table->string('kode_barang')->nullable();
+            $table->string('kode_barang', 4)->nullable();
             $table->integer('jumlah')->nullable();
-            $table->string('harga_satuan')->nullable();
-            $table->string('subtotal')->nullable();
+            $table->double('harga_satuan')->nullable();
+            $table->double('keuntungan')->nullable();
+            $table->double('subtotal')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

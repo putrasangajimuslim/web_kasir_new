@@ -6,21 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Products extends Model
+class Transaksi extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'barang';
+    protected $table = 'transaksi';
 
     protected $fillable = [
-        'kode_barang',
-        'kategori_id',
+        'tgl_transaksi',
         'nama_barang',
-        'merk',
-        'harga_beli',
-        'harga_jual',
-        'margin_keuntungan',
-        'satuan_barang',
-        'stok',
+        'total_harga',
+        'qty',
+        'harga',
+        'kasir_id',
     ];
 }

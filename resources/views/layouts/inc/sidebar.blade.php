@@ -32,11 +32,17 @@
                 <span>Barang</span></a>
         </li>
 
-        <li class="nav-item {{ Route::currentRouteName() === 'kategori.index' ? 'active' : '' }}">
+        <li class="nav-item {{ Route::currentRouteName() === 'transaksi.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('transaksi.index')}}">
+                <i class="fas fa-fw fa-tag"></i>
+                <span>Transaksi</span></a>
+        </li>
+
+        {{-- <li class="nav-item {{ Route::currentRouteName() === 'kategori.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('kategori.index')}}">
                 <i class="fas fa-fw fa-tag"></i>
                 <span>Kategori</span></a>
-        </li>
+        </li> --}}
 
         {{-- <li class="nav-item {{ Route::currentRouteName() === 'users.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('users.index')}}">

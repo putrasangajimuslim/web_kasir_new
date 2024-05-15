@@ -15,13 +15,13 @@ class UserSeeder extends Seeder
     public function run()
     {
         $dataUserOld = [
-            ["nama" => 'Indah Khaerunnisa SH', 'tgl_lahir' => '1980-01-10', 'status' => 1, 'no_hp' => '087877787656', 'alamat' => 'jl.Tebet raya', 'jenis_kelamin' => 'P', 'password' => bcrypt('password'), 'role' => 'kasir', 'id_jabatan' => 1, 'email' => 'indah@gmail.com', 'created_at' => now(), 'updated_at' => now()],
-            ["nama" => 'admin', 'tgl_lahir' => '1999-01-22', 'status' => 1, 'no_hp' => '0828182112', 'alamat' => 'jl.kembang', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'admin', 'id_jabatan' => 4, 'email' => 'admin@gmail.com', 'created_at' => now(), 'updated_at' => now()],
-            ["nama" => 'Fadlur Rahman', 'tgl_lahir' => '1988-06-22', 'status' => 1, 'no_hp' => '085782455676', 'alamat' => 'jl.Cilodong Raya', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'id_jabatan' => 2, 'email' => 'fadlur@gmail.com', 'created_at' => now(), 'updated_at' => now()],
-            ["nama" => 'Widia Salsabila', 'tgl_lahir' => '1990-04-11', 'status' => 1, 'no_hp' => '089577780987', 'alamat' => '', 'jenis_kelamin' => 'P', 'password' => bcrypt('password'), 'role' => 'kasir', 'id_jabatan' => 3, 'email' => 'widia@gmail.com', 'created_at' => now(), 'updated_at' => now()],
-            ["nama" => 'Sofyan Ahmad', 'tgl_lahir' => '1995-05-02', 'status' => 1, 'no_hp' => '08788895643', 'alamat' => '', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'id_jabatan' => 5, 'email' => 'sofyan@gmail.com', 'created_at' => now(), 'updated_at' => now()],
-            ["nama" => 'Andre', 'tgl_lahir' => '1997-03-02', 'status' => 1, 'no_hp' => '08281221214', 'alamat' => '', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'id_jabatan' => 6, 'email' => 'andre@gmail.com', 'created_at' => now(), 'updated_at' => now()],
-            ["nama" => 'Parto', 'tgl_lahir' => '1997-01-02', 'status' => 1, 'no_hp' => '08214431121', 'alamat' => '', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'id_jabatan' => 7, 'email' => 'parto@gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ["nama" => 'Indah Khaerunnisa SH', 'tgl_lahir' => '1980-01-10', 'status' => 1, 'no_hp' => '087877787656', 'alamat' => 'jl.Tebet raya', 'jenis_kelamin' => 'P', 'password' => bcrypt('password'), 'role' => 'kasir', 'email' => 'indah@gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ["nama" => 'admin', 'tgl_lahir' => '1999-01-22', 'status' => 1, 'no_hp' => '0828182112', 'alamat' => 'jl.kembang', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'admin', 'email' => 'admin@gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ["nama" => 'Fadlur Rahman', 'tgl_lahir' => '1988-06-22', 'status' => 1, 'no_hp' => '085782455676', 'alamat' => 'jl.Cilodong Raya', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'email' => 'fadlur@gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ["nama" => 'Widia Salsabila', 'tgl_lahir' => '1990-04-11', 'status' => 1, 'no_hp' => '089577780987', 'alamat' => '', 'jenis_kelamin' => 'P', 'password' => bcrypt('password'), 'role' => 'kasir', 'email' => 'widia@gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ["nama" => 'Sofyan Ahmad', 'tgl_lahir' => '1995-05-02', 'status' => 1, 'no_hp' => '08788895643', 'alamat' => '', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'email' => 'sofyan@gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ["nama" => 'Andre', 'tgl_lahir' => '1997-03-02', 'status' => 1, 'no_hp' => '08281221214', 'alamat' => '', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'email' => 'andre@gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ["nama" => 'Parto', 'tgl_lahir' => '1997-01-02', 'status' => 1, 'no_hp' => '08214431121', 'alamat' => '', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'email' => 'parto@gmail.com', 'created_at' => now(), 'updated_at' => now()],
         ];
 
         $currentYear = date('Y');
@@ -52,7 +52,6 @@ class UserSeeder extends Seeder
                 'jenis_kelamin' => $dataUserOld[$i]['jenis_kelamin'],
                 'password' => $dataUserOld[$i]['password'],
                 'role' => $dataUserOld[$i]['role'],
-                'id_jabatan' => $dataUserOld[$i]['id_jabatan'],
                 'email' => $dataUserOld[$i]['email'],
                 'created_at' => $dataUserOld[$i]['created_at'],
                 'updated_at' => $dataUserOld[$i]['updated_at'],

@@ -13,15 +13,15 @@ class CreateMemberTable extends Migration
      */
     public function up()
     {
-        Schema::create('member', function (Blueprint $table) {
-            $table->id();
-            $table->string('nm_member')->nullable();
-            $table->longText('alamat')->nullable();
-            $table->string('telp')->nullable();
-            $table->string('email')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('member', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('nm_member')->nullable();
+        //     $table->longText('alamat')->nullable();
+        //     $table->string('telp')->nullable();
+        //     $table->string('email')->nullable();
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
     }
 
     /**
@@ -31,6 +31,6 @@ class CreateMemberTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('member');
+        // Schema::dropIfExists('member');
     }
 }

@@ -15,15 +15,14 @@ class CreateProductsTable extends Migration
     {
         Schema::create('barang', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_barang')->nullable();
+            $table->string('kode_barang', 4)->nullable();
             $table->integer('kategori_id')->nullable();
-            $table->string('nama_barang')->nullable();
-            $table->string('merk')->nullable();
-            $table->string('harga_beli')->nullable();
-            $table->string('harga_jual')->nullable();
-            $table->integer('margin_keuntungan')->nullable();
-            $table->string('satuan_barang')->nullable();
+            $table->string('nama_barang', 30)->nullable();
+            $table->string('merk', 30)->nullable();
             $table->integer('stok')->nullable();
+            $table->date('date_expired')->nullable();
+            $table->double('harga_beli')->nullable();
+            $table->double('harga_jual')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

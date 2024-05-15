@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    {{ __('Halaman Kehadiran') }} | {{ config('app.name') }}
+    {{ __('Halaman Barang') }} | {{ config('app.name') }}
 @endsection
 
 @section('content')
@@ -31,14 +31,13 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
+                        <th>No</th>
                         <th>Kode Barang</th>
                         <th>Nama Barang</th>
-                        <th>Kategori</th>
                         <th>Merk</th>
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
-                        <th>Margin Keuntungan</th>
-                        <th>Satuan Barang</th>
+                        <th>Masa Expired</th>
                         <th>Stok</th>
                         @if ($isAdminAccess)
                             <th>Action</th>
@@ -46,16 +45,17 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php $no = 1; ?>
+
                     @foreach ($products as $product)
                     <tr>
+                        <td>{{ $no++ }}</td>
                         <td>{{ $product->kode_barang }}</td>
                         <td>{{ $product->nama_barang }}</td>
-                        <td>{{ $product->kategori->nama }}</td>
                         <td>{{ $product->merk }}</td>
                         <td>{{ $product->harga_beli }}</td>
                         <td>{{ $product->harga_jual }}</td>
-                        <td>{{ $product->margin_keuntungan }} %</td>
-                        <td>{{ $product->satuan_barang }}</td>
+                        <td>{{ $product->date_expired }}</td>
                         <td>{{ $product->stok }}</td>
                         @if ($isAdminAccess)
                             <td>
