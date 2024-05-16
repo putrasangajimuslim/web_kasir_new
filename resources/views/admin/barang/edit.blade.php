@@ -83,8 +83,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="InputStok">Stok</label>
+                        <label for="InputStok">Stok <span style="color: red">*</span></label>
                         <input type="number" class="form-control" id="InputStok" name="stok" value="{{ old('stok', $barang->stok) }}">
+                        @error('stok')
+                            <span style="color: red;">Silahkan Isi Stok Jual</span>
+                        @enderror
                     </div>
 
                     <div class="form-group">

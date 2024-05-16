@@ -6,16 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Absensi extends Model
+class DetailTransaksi extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'absen';
+    protected $table = 'detail_transaksi';
 
     protected $fillable = [
-        'kode_karyawan',
-        'jam_masuk',
-        'jam_keluar',
-        'keterangan',
+        'transaksi_id',
+        'kode_barang',
+        'jumlah',
+        'harga_jual',
+        'subtotal_item',
+        'keuntungan',
     ];
 }

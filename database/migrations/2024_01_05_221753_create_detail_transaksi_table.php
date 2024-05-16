@@ -18,9 +18,9 @@ class CreateDetailTransaksiTable extends Migration
             $table->integer('transaksi_id')->nullable();
             $table->string('kode_barang', 4)->nullable();
             $table->integer('jumlah')->nullable();
-            $table->double('harga_satuan')->nullable();
+            $table->double('harga_jual')->nullable();
+            $table->double('subtotal_item')->nullable();
             $table->double('keuntungan')->nullable();
-            $table->double('subtotal')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

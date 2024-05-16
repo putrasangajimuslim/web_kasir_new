@@ -38,6 +38,7 @@
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
                         <th>Masa Expired</th>
+                        <th>Status Layak</th>
                         <th>Stok</th>
                         @if ($isAdminAccess)
                             <th>Action</th>
@@ -92,6 +93,11 @@
                         {
                             data: 'date_expired',
                             name: 'date_expired',
+                            orderable: false,
+                        },
+                        {
+                            data: 'status_exp',
+                            name: 'status_exp',
                             orderable: false,
                         },
                         {

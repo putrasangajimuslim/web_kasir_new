@@ -14,10 +14,7 @@ class Transaksi extends Model
 
     protected $fillable = [
         'tgl_transaksi',
-        'nama_barang',
-        'total_harga',
-        'qty',
-        'harga',
+        'subtotal',
         'kasir_id',
     ];
 }

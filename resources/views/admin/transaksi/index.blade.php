@@ -43,13 +43,12 @@
         <button class="btn btn-danger mb-3">Reset Keranjang</button>
         
         <div class="table-responsive">
-            <table id="dtkasir" class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <table id="dtkasir" class="table table-bordered" id="dtTransaksi" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Nama Barang</th>
                         <th>Harga</th>
-                        <th>Stok</th>
                         <th>Qty</th>
                         <th>Masa Expired</th>
                         <th>Action</th>
@@ -113,7 +112,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-primary" data-dismiss="modal" disabled>Checkout</button>
+                  <button type="button" class="btn btn-primary" id="btnCheckoutSubmit" data-dismiss="modal" disabled>Checkout</button>
                 </div>
               </div>
             </div>
@@ -124,23 +123,97 @@
 
 @section('script')
     <script type="text/javascript">
-        $(function() {
-                var table = $('.data-table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: "{{ route('transaksi.index') }}",
-                    columns: [
-                        // {
-                        //     data: 'id',
-                        //     name: 'id',
-                        // },
-                        {
-                            data: 'campaign_name',
-                            name: 'campaign_name',
-                            orderable: false,
-                        },
-                    ]
+        $(document).ready(function() {
+            var selectedIds = [];
+            $('#dtSearchBrg').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('products.search_products') }}",
+                columns: [
+                    // {
+                    //     data: 'id',
+                    //     name: 'id',
+                    // },
+                    {
+                        data: 'kode_barang',
+                        name: 'kode_barang',
+                        orderable: false,
+                    },
+                    {
+                        data: 'nama_barang',
+                        name: 'nama_barang',
+                        orderable: false,
+                    },
+                    {
+                        data: 'harga_jual',
+                        name: 'harga_jual',
+                        orderable: false,
+                    },
+                    {
+                        data: 'stok',
+                        name: 'stok',
+                        orderable: false,
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ],
+                drawCallback: function(settings) {
+                    // Event handler untuk tombol #btnCheckout
+                    $('#dtSearchBrg').off('click', '#btnCheckout').on('click', '#btnCheckout', function() {
+                        var $this = $(this);
+                        var $icon = $this.find('i');
+                        var productId = $this.data('id'); // Ambil ID produk dari atribut data
+
+                        if ($this.hasClass('btn-primary')) {
+                            $this.removeClass('btn-primary').addClass('btn-danger');
+                            $icon.removeClass('fa-plus').addClass('fa-minus');
+                            selectedIds.push(productId); // Tambahkan ID ke array
+                        } else {
+                            $this.removeClass('btn-danger').addClass('btn-primary');
+                            $icon.removeClass('fa-minus').addClass('fa-plus');
+                            selectedIds = selectedIds.filter(function(id) {
+                                return id !== productId; // Hapus ID dari array
+                            });
+                        }
+
+                        // Cek apakah selectedIds kosong atau tidak untuk mengelola tombol Checkout
+                        if (selectedIds.length > 0) {
+                            $('#btnCheckoutSubmit').removeAttr('disabled');
+                        } else {
+                            $('#btnCheckoutSubmit').attr('disabled', 'disabled');
+                        }
+                    });
+                }
+            });
+
+            $('#btnCheckoutSubmit').on('click', function() {
+                // Kirim data selectedIds dengan AJAX
+                $.ajax({
+                    url: '{{ route("transaksi.store") }}',  // Ganti dengan endpoint Anda
+                    method: 'POST',
+                    data: {
+                        selectedIds: selectedIds,
+                        _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                    },
+                    success: function(response) {
+                        // Handle sukses
+                        alert('Checkout berhasil');
+                        // Reset selectedIds dan tombol Checkout
+                        selectedIds = [];
+                        $('#btnCheckoutSubmit').attr('disabled', 'disabled');
+                        // Bisa tambahkan logika lain untuk mereset DataTable jika perlu
+                        table.ajax.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error
+                        alert('Checkout gagal');
+                    }
                 });
             });
+        });
     </script>
 @endsection

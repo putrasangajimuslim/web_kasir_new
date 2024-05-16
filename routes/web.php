@@ -34,6 +34,7 @@ Route::middleware(['isLogin'])->group(function () {
     Route::prefix('products')->as('products.')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
         Route::get('create', [ProductController::class, 'create'])->name('create');
+        Route::get('search_products', [ProductController::class, 'searchProducts'])->name('search_products');
         Route::post('store', [ProductController::class, 'store'])->name('store');
         Route::get('edit/{id}', [ProductController::class, 'edit'])->name('edit');
         Route::post('update', [ProductController::class, 'update'])->name('update');
