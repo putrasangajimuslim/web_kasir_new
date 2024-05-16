@@ -11,23 +11,34 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use DataTables;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
         $isAdminAccess = false;
 
-        $products = [];
-
         if ($user->role == 'admin') {
-            $products = Products::get();
+            if ($request->ajax()) {
+                $data = Products::orderBy('id', 'desc');
+                
+                return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row) {
+                        $edit = '<a href="' . route('transaksi.edit', $row->id) . '" class="btn btn-secondary btn-rounded btn-icon-md" title="Edit"><i class="fas fa-fw fa-edit"></i></a>';
+                        $delete = '<a href="#" data-href="' . route('transaksi.destroy', $row->id) . '" class="btn btn-danger btn-rounded btn-icon-md" title="Delete" data-toggle="modal" data-target="#modal-delete" data-key="' . $row->id . '"><i class="fas fa-fw fa-trash"></i></a>';
+                        return $edit . $delete;
+                    })
+                    ->rawColumns(['action'])
+                    ->toJson();
+            }
             $isAdminAccess = true;
         }
 
-        return view('admin.barang.index', ['isAdminAccess' => $isAdminAccess, 'products' => $products]);
+        return view('admin.barang.index', ['isAdminAccess' => $isAdminAccess]);
     }
 
     public function create()

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    {{ __('Halaman Kehadiran') }} | {{ config('app.name') }}
+    {{ __('Halaman Transasaksi') }} | {{ config('app.name') }}
 @endsection
 
 @section('content')
@@ -45,6 +45,15 @@
         <div class="table-responsive">
             <table id="dtkasir" class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Barang</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Qty</th>
+                        <th>Masa Expired</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -88,7 +97,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
-                        {{-- <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table table-bordered" id="dtSearchBrg" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
                                     <th>Kode Barang</th>
@@ -99,19 +108,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($products as $product)
-                                <tr>
-                                    <td>{{ $product->kode_barang }}</td>
-                                    <td>{{ $product->nama_barang }}</td>
-                                    <td>{{ $product->harga_jual }}</td>
-                                    <td>{{ $product->stok }}</td>
-                                    <td>
-                                        <button class="btn btn-success">+</button>
-                                    </td>
-                                </tr>
-                                @endforeach
                             </tbody>
-                        </table> --}}
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -125,14 +123,24 @@
 @endsection
 
 @section('script')
-    @include('admin.modal.destroy')
-    <script>
-
-        $('#deleteModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var url = button.data('url'); // Ambil nilai data-url dari tombol
-            var form = $(this).find('form'); // Temukan elemen form di dalam modal
-            form.attr('action', url);
-        });
+    <script type="text/javascript">
+        $(function() {
+                var table = $('.data-table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ route('transaksi.index') }}",
+                    columns: [
+                        // {
+                        //     data: 'id',
+                        //     name: 'id',
+                        // },
+                        {
+                            data: 'campaign_name',
+                            name: 'campaign_name',
+                            orderable: false,
+                        },
+                    ]
+                });
+            });
     </script>
 @endsection

@@ -6,10 +6,11 @@ use App\Models\Products;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use DataTables;
 
 class TransaksiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -18,12 +19,27 @@ class TransaksiController extends Controller
         $products = [];
 
         if ($user->role == 'admin') {
-            $products = Transaksi::get();
-            $products = Products::get();
+            if ($request->ajax()) {
+                $data = Transaksi::orderBy('id', 'desc');
+                
+                return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row) {
+                        $edit = '<a href="' . route('transaksi.edit', $row->id) . '" class="btn btn-secondary btn-rounded btn-icon-md" title="Edit"><i class="ti-pencil"></i></a>';
+                        $delete = '<a href="#" data-href="' . route('transaksi.destroy', $row->id) . '" class="btn btn-danger btn-rounded btn-icon-md" title="Delete" data-toggle="modal" data-target="#modal-delete" data-key="' . $row->id . '"><i class="ti-trash"></i></a>';
+                        return $edit . $delete;
+                    })
+                    ->rawColumns(['action'])
+                    ->toJson();
+            }
             $isAdminAccess = true;
         }
 
-        return view('admin.transaksi.index', ['isAdminAccess' => $isAdminAccess, 'products' => $products]);
+        return view('admin.transaksi.index', ['isAdminAccess' => $isAdminAccess]);
+    }
+
+    public function getProducts() {
+
     }
 
     public function create()
