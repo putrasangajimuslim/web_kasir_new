@@ -18,30 +18,38 @@ class TransaksiController extends Controller
 
         $isAdminAccess = false;
 
-        $products = [];
-
         if ($user->role == 'admin') {
             if ($request->ajax()) {
-                $data = Transaksi::where('kasir_id', $user->id)->orderBy('id', 'desc');
+                $today = Carbon::now()->toDateString(); 
 
-                return DataTables::of($data)
+                $transaksi = Transaksi::where('tgl_transaksi', $today)
+                            ->where('kasir_id', $user->id)
+                            ->first();
+
+                $detailTransaksi = [];
+
+                if (!empty($transaksi)) {
+                    $detailTransaksi = DetailTransaksi::where('transaksi_id', $transaksi->id)->with(['products'])
+                                        ->orderBy('id', 'asc');
+                }
+
+                return DataTables::of($detailTransaksi)
                     ->addIndexColumn()
-                    ->addColumn('action', function ($row) {
-                        $edit = '<a href="' . route('transaksi.edit', $row->id) . '" class="btn btn-secondary btn-rounded btn-icon-md" title="Edit"><i class="ti-pencil"></i></a>';
-                        $delete = '<a href="#" data-href="' . route('transaksi.destroy', $row->id) . '" class="btn btn-danger btn-rounded btn-icon-md" title="Delete" data-toggle="modal" data-target="#modal-delete" data-key="' . $row->id . '"><i class="ti-trash"></i></a>';
-                        return $edit . $delete;
+                    ->addColumn('jumlah', function ($row) {
+                        $qty = '<input type="number" class="form-control jumlah_brg" value="' . $row->jumlah . '" data-id="' . $row->id . '" min="0" disabled>';
+                        return $qty;
                     })
-                    ->rawColumns(['action'])
+                    ->addColumn('action', function ($row) {
+                        $action = '<button class="btn btn-danger btn-rounded btn-icon-md" id="btnRemove" data-id="' . $row->id . '">X</button>';
+                        return $action;
+                    })
+                    ->rawColumns(['jumlah','action'])
                     ->toJson();
             }
             $isAdminAccess = true;
         }
 
         return view('admin.transaksi.index', ['isAdminAccess' => $isAdminAccess]);
-    }
-
-    public function getProducts()
-    {
     }
 
     public function create()
@@ -120,27 +128,22 @@ class TransaksiController extends Controller
 
     public function update(Request $request)
     {
-        $validateData = $request->validate([
-            'name' => 'required',
-            'merk' => 'required',
-            'harga_beli' => 'required',
-            'harga_jual' => 'required',
-            'masa_exp' => 'required',
-        ]);
+        $id = $request->id;
+        $qty = $request->value;
 
-        $barang = Transaksi::where('id', $request->product_id)->first();
-        // $barang->kategori_id = $request->kategori_id;
-        $barang->nama_barang = $request->name;
-        $barang->merk = $request->merk;
-        $barang->harga_beli = $request->harga_beli;
-        $barang->harga_jual = $request->harga_jual;
-        // $barang->margin_keuntungan = $request->margin_keuntungan;
-        // $barang->satuan_barang = $request->satuan_barang;
-        $barang->stok = $request->stok;
-        $barang->date_expired = $request->masa_exp;
-        $barang->save();
+        if ($qty == 0) {
+            DetailTransaksi::where('id', $id)->delete();
+        } else {
+            $detailTransaksi = DetailTransaksi::where('id', $id)->first();
+            $detailTransaksi->jumlah = $qty;
+            $detailTransaksi->subtotal_item = $qty * $detailTransaksi->harga_jual;
+            $detailTransaksi->save();
+        }
 
-        return redirect()->route('products.edit', ['id' => $request->product_id])->with('message', 'Berhasil Mengupdate Barang');
+        return response()->json([
+            'error' => false,
+            'message' => 'Berhasil Melakukan Update Keranjang',
+        ], 200);
     }
 
     public function destroy($id)

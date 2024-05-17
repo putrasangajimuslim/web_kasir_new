@@ -20,4 +20,8 @@ class DetailTransaksi extends Model
         'subtotal_item',
         'keuntungan',
     ];
+
+    public function products() {
+        return $this->belongsTo(Products::class, 'kode_barang', 'kode_barang');
+    }
 }

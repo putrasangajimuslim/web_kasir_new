@@ -4,6 +4,24 @@
     {{ __('Halaman Transasaksi') }} | {{ config('app.name') }}
 @endsection
 
+@section('style')
+    <style>
+        .large-header {
+            white-space: nowrap; /* Prevent text from wrapping */
+            padding: 10px 20px;  /* Adjust padding as needed */
+            font-size: 16px;     /* Adjust font size as needed */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .input-qty {
+            width: 500px;
+        }
+    </style>
+@endsection
+
 @section('content')
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -43,7 +61,7 @@
         <button class="btn btn-danger mb-3">Reset Keranjang</button>
         
         <div class="table-responsive">
-            <table id="dtkasir" class="table table-bordered" id="dtTransaksi" width="100%" cellspacing="0">
+            <table class="table table-bordered" id="dtTransaksi" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -99,11 +117,11 @@
                         <table class="table table-bordered" id="dtSearchBrg" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Kode Barang</th>
-                                    <th>Nama Barang</th>
-                                    <th>Harga Jual</th>
-                                    <th>Stok</th>
-                                    <th>Action</th>
+                                    <th class="large-header">Kode Barang</th>
+                                    <th class="large-header">Nama Barang</th>
+                                    <th class="large-header">Harga Jual</th>
+                                    <th class="large-header">Stok</th>
+                                    <th class="large-header">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -167,6 +185,11 @@
                         var $this = $(this);
                         var $icon = $this.find('i');
                         var productId = $this.data('id'); // Ambil ID produk dari atribut data
+                        // var inputNumber = '<input type="number" class="input-number" value="1">';
+                        // $(this).parent().append(inputNumber);
+
+                        var inputQty = document.querySelector('.hidden');
+                        
 
                         if ($this.hasClass('btn-primary')) {
                             $this.removeClass('btn-primary').addClass('btn-danger');
@@ -190,6 +213,49 @@
                 }
             });
 
+            let no = 1;
+            $('#dtTransaksi').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('transaksi.index') }}",
+                columns: [
+                    {
+                        data: null, // This is used to generate the row number
+                        name: 'no',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        data: 'products.nama_barang',
+                        name: 'products.nama_barang',
+                        orderable: false,
+                    },
+                    {
+                        data: 'harga_jual',
+                        name: 'harga_jual',
+                        orderable: false,
+                    },
+                    {
+                        data: 'jumlah',
+                        name: 'jumlah',
+                        orderable: false,
+                    },
+                    {
+                        data: 'products.date_expired',
+                        name: 'products.date_expired',
+                        orderable: false,
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                    },
+                ],
+            });
+
             $('#btnCheckoutSubmit').on('click', function() {
                 // Kirim data selectedIds dengan AJAX
                 $.ajax({
@@ -203,10 +269,7 @@
                         // Handle sukses
                         alert('Checkout berhasil');
                         // Reset selectedIds dan tombol Checkout
-                        selectedIds = [];
-                        $('#btnCheckoutSubmit').attr('disabled', 'disabled');
-                        // Bisa tambahkan logika lain untuk mereset DataTable jika perlu
-                        table.ajax.reload();
+                        location.reload();
                     },
                     error: function(xhr, status, error) {
                         // Handle error
@@ -214,6 +277,32 @@
                     }
                 });
             });
+
+            // $(document).on('change', '.jumlah_brg', function() {
+            //     var value = $(this).val();
+            //     var id = $(this).data('id');
+
+            //     if (value < 0) {
+            //         $(this).val(0);
+            //         value = 0;
+            //     }
+
+            //     // $.ajax({
+            //     //     url: '{{ route("transaksi.update") }}',
+            //     //     type: 'POST',
+            //     //     data: {
+            //     //         id: id,
+            //     //         value: value,
+            //     //         _token: '{{ csrf_token() }}'
+            //     //     },
+            //     //     success: function(response) {
+            //     //         // alert(response.message)
+            //     //     },
+            //     //     error: function(error) {
+            //     //         console.error('Error occurred:', error);
+            //     //     }
+            //     // });
+            // });
         });
     </script>
 @endsection

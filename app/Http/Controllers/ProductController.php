@@ -64,7 +64,10 @@ class ProductController extends Controller
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function ($row) {
-                        $action = '<button class="btn btn-primary btn-rounded btn-icon-md" id="btnCheckout" data-id="' . $row->id . '" title="Edit"><i class="fas fa-fw fa-plus"></i></button>';
+                        $action = '<div class="action_dt">
+                        <button class="btn btn-primary btn-rounded btn-icon-md" id="btnCheckout" data-id="' . $row->id . '" title="Edit"><i class="fas fa-fw fa-plus"></i></button>
+                        <input type="number" class="hidden input-qty form-control" value="1">
+                        </div>';
                         return $action;
                     })
                     ->rawColumns(['action'])
