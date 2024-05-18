@@ -37,6 +37,7 @@ Route::middleware(['isLogin'])->group(function () {
         Route::get('search_products', [ProductController::class, 'searchProducts'])->name('search_products');
         Route::post('store', [ProductController::class, 'store'])->name('store');
         Route::get('edit/{id}', [ProductController::class, 'edit'])->name('edit');
+        Route::post('edit-product-json', [ProductController::class, 'editProducts'])->name('edit-product-json');
         Route::post('update', [ProductController::class, 'update'])->name('update');
         Route::get('destroy{id}', [ProductController::class, 'destroy'])->name('destroy');
     });
@@ -66,6 +67,7 @@ Route::middleware(['isLogin'])->group(function () {
         Route::post('store', [TransaksiController::class, 'store'])->name('store');
         Route::get('edit/{id}', [TransaksiController::class, 'edit'])->name('edit');
         Route::post('update', [TransaksiController::class, 'update'])->name('update');
+        Route::post('action-item', [TransaksiController::class, 'actionItem'])->name('action-item');
         Route::get('destroy/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
     });
 

@@ -131,6 +131,20 @@ class ProductController extends Controller
         return view('admin.barang.edit', ['barang' => $barang]);
     }
 
+    public function editProducts(Request $request)
+    {
+        $detailId = $request->id;
+        $barangId = $request->barang_id;
+        $jumlah = $request->jumlah;
+
+        $barang = Products::where('id', $barangId)->first();
+
+        if ($jumlah == 0) {
+            return response()->json(['error' => 'true', 'message' => 'Anda Yakin Ingin Menghilangkan Item?']);
+        }
+        return response()->json(['error' => 'false', 'data' => $barang]);
+    }
+
     public function update(Request $request)
     {
         $validateData = $request->validate([

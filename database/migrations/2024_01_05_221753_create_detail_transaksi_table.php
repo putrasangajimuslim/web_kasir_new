@@ -14,15 +14,27 @@ class CreateDetailTransaksiTable extends Migration
     public function up()
     {
         Schema::create('detail_transaksi', function (Blueprint $table) {
-            $table->id();
-            $table->integer('transaksi_id')->nullable();
-            $table->string('kode_barang', 4)->nullable();
-            $table->integer('jumlah')->nullable();
-            $table->double('harga_jual')->nullable();
-            $table->double('subtotal_item')->nullable();
-            $table->double('keuntungan')->nullable();
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('transaksi_id');
+            $table->unsignedBigInteger('barang_id');
+            $table->integer('jumlah');
+            $table->double('harga_jual');
+            $table->double('subtotal_item');
+            $table->double('keuntungan');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('barang_id')
+                    ->references('id')
+                    ->on('barang')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade'); 
+
+            $table->foreign('transaksi_id')
+                    ->references('id')
+                    ->on('transaksi')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade'); 
         });
     }
 

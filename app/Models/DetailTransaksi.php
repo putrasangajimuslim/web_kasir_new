@@ -22,6 +22,6 @@ class DetailTransaksi extends Model
     ];
 
     public function products() {
-        return $this->belongsTo(Products::class, 'kode_barang', 'kode_barang');
+        return $this->belongsTo(Products::class, 'barang_id', 'id');
     }
 }

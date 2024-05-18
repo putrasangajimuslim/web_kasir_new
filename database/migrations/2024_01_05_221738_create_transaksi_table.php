@@ -14,12 +14,18 @@ class CreateTransaksiTable extends Migration
     public function up()
     {
         Schema::create('transaksi', function (Blueprint $table) {
-            $table->id();
-            $table->dateTime('tgl_transaksi')->nullable();
-            $table->double('subtotal')->nullable();
-            $table->integer('kasir_id')->nullable();
+            $table->bigIncrements('id');
+            $table->dateTime('tgl_transaksi');
+            $table->double('subtotal');
+            $table->unsignedBigInteger('kasir_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('kasir_id')
+                    ->references('id')
+                    ->on('users')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade'); 
         });
     }
 

@@ -18,17 +18,23 @@ class TransaksiController extends Controller
 
         $isAdminAccess = false;
 
+        $total = 0;
+
+        $today = Carbon::now()->toDateString(); 
+
+        $transaksi = Transaksi::where('tgl_transaksi', $today)
+                    ->where('kasir_id', $user->id)
+                    ->first();
+
+        $total = $transaksi->subtotal;
+
         if ($user->role == 'admin') {
             if ($request->ajax()) {
-                $today = Carbon::now()->toDateString(); 
-
-                $transaksi = Transaksi::where('tgl_transaksi', $today)
-                            ->where('kasir_id', $user->id)
-                            ->first();
 
                 $detailTransaksi = [];
 
                 if (!empty($transaksi)) {
+                    $total = $transaksi->subtotal;
                     $detailTransaksi = DetailTransaksi::where('transaksi_id', $transaksi->id)->with(['products'])
                                         ->orderBy('id', 'asc');
                 }
@@ -36,7 +42,13 @@ class TransaksiController extends Controller
                 return DataTables::of($detailTransaksi)
                     ->addIndexColumn()
                     ->addColumn('jumlah', function ($row) {
-                        $qty = '<input type="number" class="form-control jumlah_brg" value="' . $row->jumlah . '" data-id="' . $row->id . '" min="0" disabled>';
+                        $qty = '
+                            <div class="container-item-kasir">
+                                <button id="decrementBtn" data-id="'.$row->id.'" data-barang="'.$row->barang_id.'">-</button>
+                                <input type=number class="title-qty" id="value_'.$row->id.'" value="'.$row->jumlah.'" readonly>
+                                <button id="incrementBtn" data-id="'.$row->id.'" data-barang="'.$row->barang_id.'">+</button>
+                            </div>
+                        ';
                         return $qty;
                     })
                     ->addColumn('action', function ($row) {
@@ -49,7 +61,7 @@ class TransaksiController extends Controller
             $isAdminAccess = true;
         }
 
-        return view('admin.transaksi.index', ['isAdminAccess' => $isAdminAccess]);
+        return view('admin.transaksi.index', ['isAdminAccess' => $isAdminAccess, 'total' => $total]);
     }
 
     public function create()
@@ -90,21 +102,23 @@ class TransaksiController extends Controller
 
             // Check jika detail transaksi untuk produk sudah ada
             $detailTransaksi = DetailTransaksi::where('transaksi_id', $transaksi->id)
-                ->where('kode_barang', $product->kode_barang)
+                ->where('barang_id', $product->id)
                 ->first();
 
             if ($detailTransaksi) {
                 // Jika detail transaksi untuk produk sudah ada, update jumlah dan subtotalnya
                 $detailTransaksi->jumlah += 1;
                 $detailTransaksi->subtotal_item = $detailTransaksi->jumlah * $product->harga_jual;
+                $detailTransaksi->keuntungan = 0;
                 $detailTransaksi->save();
             } else {
                 // Jika detail transaksi untuk produk belum ada, buat detail transaksi baru
                 $detailTransaksiBaru = new DetailTransaksi();
                 $detailTransaksiBaru->transaksi_id = $transaksi->id;
-                $detailTransaksiBaru->kode_barang = $product->kode_barang;
+                $detailTransaksiBaru->barang_id = $product->id;
                 $detailTransaksiBaru->jumlah = 1; // Jumlah default adalah 1
                 $detailTransaksiBaru->harga_jual = $product->harga_jual;
+                $detailTransaksiBaru->keuntungan = 0;
                 $detailTransaksiBaru->subtotal_item = $detailTransaksiBaru->jumlah * $product->harga_jual; // Subtotal item adalah harga jual awal
                 $detailTransaksiBaru->save();
             }
@@ -117,6 +131,11 @@ class TransaksiController extends Controller
         $transaksi->save();
 
         return response()->json(['message' => 'Checkout berhasil']);
+    }
+
+    public function actionItem(Request $request)
+    {
+        return response()->json(['req' => $request->all()]);
     }
 
     public function edit($id)

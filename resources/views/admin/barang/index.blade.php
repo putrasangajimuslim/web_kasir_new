@@ -31,7 +31,6 @@
             <table class="table table-bordered" id="dtBarangs" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>No</th>
                         <th>Kode Barang</th>
                         <th>Nama Barang</th>
                         <th>Merk</th>
@@ -55,64 +54,26 @@
 
 @section('script')
     <script type="text/javascript">
-        $(function() {
-                var table = $('#dtBarangs').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: "{{ route('products.index') }}",
-                    columns: [
-                        {
-                            data: 'id',
-                            name: 'id',
-                        },
-                        {
-                            data: 'kode_barang',
-                            name: 'kode_barang',
-                            orderable: false,
-                        },
-                        {
-                            data: 'nama_barang',
-                            name: 'nama_barang',
-                            orderable: false,
-                        },
-                        {
-                            data: 'merk',
-                            name: 'merk',
-                            orderable: false,
-                        },
-                        {
-                            data: 'harga_beli',
-                            name: 'harga_beli',
-                            orderable: false,
-                        },
-                        {
-                            data: 'harga_jual',
-                            name: 'harga_jual',
-                            orderable: false,
-                        },
-                        {
-                            data: 'date_expired',
-                            name: 'date_expired',
-                            orderable: false,
-                        },
-                        {
-                            data: 'status_exp',
-                            name: 'status_exp',
-                            orderable: false,
-                        },
-                        {
-                            data: 'stok',
-                            name: 'stok',
-                            orderable: false,
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
-                    ]
-                });
+        $(document).ready(function() {
+            var table = $('#dtBarangs').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('products.index') }}",
+                columns: [
+                    { data: 'kode_barang', name: 'kode_barang', sortable: false },
+                    { data: 'nama_barang', name: 'nama_barang', sortable: false },
+                    { data: 'merk', name: 'merk', sortable: false },
+                    { data: 'harga_beli', name: 'harga_beli', sortable: false },
+                    { data: 'harga_jual', name: 'harga_jual', sortable: false },
+                    { data: 'date_expired', name: 'date_expired', sortable: false },
+                    { data: 'status_exp', name: 'status_exp', sortable: false },
+                    { data: 'stok', name: 'stok', sortable: false },
+                    { data: 'action', name: 'action', sortable: false },
+                ],
+                initComplete: function () {
+                    $('.sorting, .sorting_asc, .sorting_desc').removeClass('sorting sorting_asc sorting_desc').addClass('no-sort');
+                }
             });
+        });
     </script>
 @endsection

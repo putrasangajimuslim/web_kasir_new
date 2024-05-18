@@ -19,6 +19,30 @@
         .input-qty {
             width: 500px;
         }
+
+        .container-item-kasir {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container-item-kasir button {
+            /* padding: 10px 20px; */
+            font-size: 24px;
+            background-color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .container-item-kasir button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .title-qty {
+            font-size: 18px;
+            margin-left: 24px;
+            margin-right: 24px;
+        }
     </style>
 @endsection
 
@@ -40,6 +64,14 @@
             {{ session('error') }}
         </div>
         @endif
+
+        <!-- <div class="container-item-kasir">
+            <div class="card-item-kasir">
+                <button id="decrementBtn" onclick="decrement()">-</button>
+                <span id="value">1</span>
+                <button id="incrementBtn" onclick="increment()">+</button>
+            </div>
+        </div> -->
 
        <button type="button" class="card shadow shadow-none text-center col-2 mb-4" data-toggle="modal" data-target="#searchProduct">
             <div class="p-2">
@@ -81,19 +113,19 @@
             <div class="col">
             <div class="form-group">
                 <label for="inputEmail3">Total</label>
-                <input type="email" class="form-control" id="inputEmail3">
+                <input type="email" class="form-control" id="total_brg" value="{{ $total }}">
             </div>
             </div>
             <div class="col">
             <div class="form-group">
                 <label for="inputEmail3">Bayar</label>
-                <input type="email" class="form-control" id="inputEmail3">
+                <input type="email" class="form-control" id="bayar_brg">
             </div>
             </div>
             <div class="col">
             <div class="form-group">
                 <label for="inputEmail3">Kembali</label>
-                <input type="email" class="form-control" id="inputEmail3">
+                <input type="email" class="form-control" id="kembali_brg">
             </div>
             </div>
         </div>
@@ -141,43 +173,20 @@
 
 @section('script')
     <script type="text/javascript">
+        let valueElement = document.getElementById('value');
+
         $(document).ready(function() {
             var selectedIds = [];
-            $('#dtSearchBrg').DataTable({
+            var table = $('#dtSearchBrg').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('products.search_products') }}",
                 columns: [
-                    // {
-                    //     data: 'id',
-                    //     name: 'id',
-                    // },
-                    {
-                        data: 'kode_barang',
-                        name: 'kode_barang',
-                        orderable: false,
-                    },
-                    {
-                        data: 'nama_barang',
-                        name: 'nama_barang',
-                        orderable: false,
-                    },
-                    {
-                        data: 'harga_jual',
-                        name: 'harga_jual',
-                        orderable: false,
-                    },
-                    {
-                        data: 'stok',
-                        name: 'stok',
-                        orderable: false,
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
+                    { data: 'kode_barang', name: 'kode_barang', sortable: false },
+                    { data: 'nama_barang', name: 'nama_barang', sortable: false },
+                    { data: 'harga_jual', name: 'harga_jual', sortable: false },
+                    { data: 'stok', name: 'stok', sortable: false },
+                    { data: 'action', name: 'action', sortable: false },
                 ],
                 drawCallback: function(settings) {
                     // Event handler untuk tombol #btnCheckout
@@ -210,11 +219,13 @@
                             $('#btnCheckoutSubmit').attr('disabled', 'disabled');
                         }
                     });
+                },
+                initComplete: function () {
+                    $('.sorting, .sorting_asc, .sorting_desc').removeClass('sorting sorting_asc sorting_desc').addClass('no-sort');
                 }
             });
 
-            let no = 1;
-            $('#dtTransaksi').DataTable({
+            var table = $('#dtTransaksi').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('transaksi.index') }}",
@@ -231,29 +242,118 @@
                     {
                         data: 'products.nama_barang',
                         name: 'products.nama_barang',
-                        orderable: false,
+                        sortable: false,
                     },
                     {
                         data: 'harga_jual',
                         name: 'harga_jual',
-                        orderable: false,
+                        sortable: false,
                     },
                     {
                         data: 'jumlah',
                         name: 'jumlah',
-                        orderable: false,
+                        sortable: false,
                     },
                     {
                         data: 'products.date_expired',
                         name: 'products.date_expired',
-                        orderable: false,
+                        sortable: false,
                     },
                     {
                         data: 'action',
                         name: 'action',
-                        orderable: false,
+                        sortable: false,
                     },
                 ],
+                drawCallback: function(settings) {
+
+                    $('#dtTransaksi').off('click', '#incrementBtn').on('click', '#incrementBtn', function() {
+                        var $this = $(this);
+                        var id = $this.data('id');
+                        var barangId = $this.data('barang');
+                        var inputId = 'value_' + id;
+                        var jumlah = parseInt($('#' + inputId).val());
+                        jumlah += 1;
+
+                        $('#' + inputId).val(jumlah);
+
+                        $.ajax({
+                            url: '{{ route("products.edit-product-json") }}',  // Ganti dengan endpoint Anda
+                            method: 'POST',
+                            data: {
+                                detail_id: id,
+                                barang_id: barangId,
+                                jumlah: jumlah,
+                                _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                            },
+                            success: function(response) {
+                                if (response.error) {
+                                    alert(response.message)
+                                }
+                            },
+                            error: function(xhr) {
+                                alert('An error occurred: ' + xhr.responseText);
+                            }
+                        });
+                    });
+
+                    $('#dtTransaksi').off('click', '#decrementBtn').on('click', '#decrementBtn', function() {
+                        var $this = $(this);
+                        var rowId = $this.data('id');
+                        var barangId = $this.data('barang');
+
+                        var inputId = 'value_' + rowId;
+                        var jumlah = parseInt($('#' + inputId).val());
+
+                        if (jumlah > 0) {
+                            jumlah -= 1;
+                            $('#' + inputId).val(jumlah);
+
+                            $.ajax({
+                                url: '{{ route("products.edit-product-json") }}',  // Ganti dengan endpoint Anda
+                                method: 'POST',
+                                data: {
+                                    detail_id: rowId,
+                                    barang_id: barangId,
+                                    jumlah: jumlah,
+                                    _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                                },
+                                success: function(response) {
+                                    if (response.error) {
+                                        var result = confirm(response.message);
+
+                                        if (result) {
+                                            $.ajax({
+                                                url: '{{ route("transaksi.action-item") }}',  // Ganti dengan endpoint Anda
+                                                method: 'POST',
+                                                data: {
+                                                    detail_id: rowId,
+                                                    barang_id: barangId,
+                                                    jumlah: jumlah,
+                                                    _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                                                },
+                                                success: function(response) {
+                                                    
+                                                },
+                                                error: function(xhr) {
+                                                    alert('An error occurred: ' + xhr.responseText);
+                                                }
+                                            });
+                                        } else {
+                                            location.reload();
+                                        }
+                                    }
+                                },
+                                error: function(xhr) {
+                                    alert('An error occurred: ' + xhr.responseText);
+                                }
+                            });
+                        }
+                    });
+                },
+                initComplete: function () {
+                    $('.sorting, .sorting_asc, .sorting_desc').removeClass('sorting sorting_asc sorting_desc').addClass('no-sort');
+                }
             });
 
             $('#btnCheckoutSubmit').on('click', function() {
