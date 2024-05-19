@@ -10,31 +10,67 @@
         <h6 class="m-0 font-weight-bold text-primary">Laporan</h6>
     </div>
     <div class="card-body">
-        
         @if(session('message'))
-        <div class="alert alert-success">
-            {{ session('message') }}
-        </div>
+            <div class="alert alert-success">
+                {{ session('message') }}
+            </div>
         @endif
 
         @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
         @endif
+
+        <div class="d-flex mb-4">
+            <button class="btn btn-success mx-2">Refresh</button>
+            <button class="btn btn-primary">Excel</button>
+        </div>
+
+        <span class="mb-4">Filter Bulan</span>
+        <div class="container my-4">
+            
+            <div class="row">
+              <div class="col-sm">
+                <select name="" id="" class="form-control">
+                    <option value="">-- Pilih Bulan --</option>
+                </select>
+              </div>
+              <div class="col-sm">
+                <select name="" id="" class="form-control">
+                    <option value="">-- Pilih Tahun --</option>
+                </select>
+              </div>
+              <div class="col-sm">
+                  <button class="btn btn-primary">Search</button>
+              </div>
+            </div>
+        </div>
+
+        <span class="mb-4">Filter Hari</span>
+        <div class="container my-4">
+            
+            <div class="row">
+              <div class="col-sm">
+                <input type="date" class="form-control">
+              </div>
+              <div class="col-sm">
+                <button class="btn btn-primary">Search</button>
+              </div>
+            </div>
+        </div>
 
         <div class="table-responsive">
             <table class="table table-bordered" id="dtLaporans" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Kode Barang</th>
                         <th>Nama Barang</th>
-                        <th>Merk</th>
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
+                        <th>Stok</th>
                         <th>Masa Expired</th>
                         <th>Status Layak</th>
-                        <th>Stok</th>
+                        <th>Kasir</th>
                     </tr>
                 </thead>
                 <tbody>

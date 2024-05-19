@@ -43,30 +43,6 @@
                 <i class="fas fa-fw fa-user"></i>
                 <span>User Profile</span></a>
         </li>
-
-        {{-- <li class="nav-item {{ Route::currentRouteName() === 'kategori.index' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('kategori.index')}}">
-                <i class="fas fa-fw fa-tag"></i>
-                <span>Kategori</span></a>
-        </li> --}}
-
-        {{-- <li class="nav-item {{ Route::currentRouteName() === 'users.index' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('users.index')}}">
-                <i class="fas fa-fw fa-users"></i>
-                <span>Karyawan</span></a>
-        </li> --}}
-
-        {{-- <li class="nav-item {{ Route::currentRouteName() === 'kelolagaji.index' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('kelolagaji.index')}}">
-                <i class="fas fa-fw fa-cogs"></i>
-                <span>Kelola Gaji</span></a>
-        </li>
-
-        <li class="nav-item {{ Route::currentRouteName() === 'laporan.index' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('laporan.index')}}">
-                <i class="fas fa-fw fa-cogs"></i>
-                <span>Laporan</span></a>
-        </li> --}}
     @else
         <li class="nav-item {{ Route::currentRouteName() === 'dashboard' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('dashboard')}}">
@@ -74,7 +50,7 @@
                 <span>Dashboard</span></a>
         </li>
 
-        <li class="nav-item {{ Route::currentRouteName() === 'products.index' ? 'active' : '' }}">
+         <li class="nav-item {{ Route::currentRouteName() === 'products.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('products.index')}}">
                 <i class="fas fa-fw fa-tag"></i>
                 <span>Barang</span></a>
@@ -85,11 +61,11 @@
                 <i class="fas fa-fw fa-tag"></i>
                 <span>Transaksi</span></a>
         </li>
-        {{-- <li class="nav-item {{ Route::currentRouteName() === 'kehadiran.index' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('kehadiran.index')}}">
-                <i class="fas fa-fw fa-book-open"></i>
-                <span>Kehadiran</span></a>
-        </li> --}}
+        <li class="nav-item {{ Route::currentRouteName() === 'user-profile.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('user-profile.index')}}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>User Profile</span></a>
+        </li>
     @endif
 
     <!-- Divider -->

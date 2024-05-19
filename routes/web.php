@@ -80,5 +80,6 @@ Route::middleware(['isLogin'])->group(function () {
 
     Route::prefix('user-profile')->as('user-profile.')->group(function () {
         Route::get('/', [UserProfileController::class, 'index'])->name('index');
+        Route::post('update', [UserProfileController::class, 'updateProfile'])->name('update');
     });
 });
