@@ -19,12 +19,12 @@ class ProductController extends Controller
     {
         $user = Auth::user();
 
-        $isAdminAccess = false;
+        $role = $user->role;
 
-        if ($user->role == 'admin') {
-            if ($request->ajax()) {
-                $data = Products::orderBy('id', 'desc');
+        if ($request->ajax()) {
+            $data = Products::orderBy('id', 'desc');
 
+            if ($role == 'admin') {
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('status_exp', function ($row) {
@@ -39,44 +39,62 @@ class ProductController extends Controller
                     })
                     ->rawColumns(['action'])
                     ->toJson();
+            } else {
+                return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('status_exp', function ($row) {
+                        $expiration = Carbon::parse($row->date_expired);
+                        $statusExp = $expiration->isPast() ? '<p style="color: red">expired</p>' : 'belum expired';
+                        return $statusExp;
+                    })
+                    ->addColumn('action', function ($row) {
+                        return '';
+                    })
+                    ->rawColumns(['action'])
+                    ->toJson();
             }
-            $isAdminAccess = true;
         }
 
-        return view('admin.barang.index', ['isAdminAccess' => $isAdminAccess]);
+        return view('admin.barang.index', ['role' => $role]);
     }
 
     public function searchProducts(Request $request)
     {
         $user = Auth::user();
 
-        $isAdminAccess = false;
+        $role = $user->role;
 
-        if ($user->role == 'admin') {
-            if ($request->ajax()) {
-                $today = Carbon::now();
+        if ($request->ajax()) {
+            $today = Carbon::now();
 
-                // Mengambil data produk yang belum expired
-                $data = Products::where('date_expired', '>=', $today)
-                    ->orderBy('id', 'desc')
-                    ->get(); // Fetch data from the database
+            // Mengambil data produk yang belum expired
+            $data = Products::where('date_expired', '>=', $today)
+                ->orderBy('id', 'desc')
+                ->get(); // Fetch data from the database
 
+            if ($role == 'admin') {
+                return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    return '';
+                })
+                ->rawColumns(['action'])
+                ->toJson();
+            } else {
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function ($row) {
                         $action = '<div class="action_dt">
                         <button class="btn btn-primary btn-rounded btn-icon-md" id="btnCheckout" data-id="' . $row->id . '" title="Edit"><i class="fas fa-fw fa-plus"></i></button>
-                        <input type="number" class="hidden input-qty form-control" value="1">
                         </div>';
                         return $action;
                     })
                     ->rawColumns(['action'])
                     ->toJson();
             }
-            $isAdminAccess = true;
         }
 
-        return view('admin.barang.index', ['isAdminAccess' => $isAdminAccess]);
+        return view('admin.barang.index');
     }
 
     public function create()
@@ -129,20 +147,6 @@ class ProductController extends Controller
         $barang = Products::where('id', $id)->first();
 
         return view('admin.barang.edit', ['barang' => $barang]);
-    }
-
-    public function editProducts(Request $request)
-    {
-        $detailId = $request->id;
-        $barangId = $request->barang_id;
-        $jumlah = $request->jumlah;
-
-        $barang = Products::where('id', $barangId)->first();
-
-        if ($jumlah == 0) {
-            return response()->json(['error' => 'true', 'message' => 'Anda Yakin Ingin Menghilangkan Item?']);
-        }
-        return response()->json(['error' => 'false', 'data' => $barang]);
     }
 
     public function update(Request $request)

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    {{ __('Halaman Transasaksi') }} | {{ config('app.name') }}
+    {{ __('Halaman Transaksi') }} | {{ config('app.name') }}
 @endsection
 
 @section('style')
@@ -39,6 +39,7 @@
         }
 
         .title-qty {
+            width: 200px;
             font-size: 18px;
             margin-left: 24px;
             margin-right: 24px;
@@ -90,7 +91,9 @@
             </div>
         </div>
 
-        <button class="btn btn-danger mb-3">Reset Keranjang</button>
+        @if ($transaksi)
+            <button class="btn btn-danger mb-3" id="btnResetItem">Reset Keranjang</button>
+        @endif
         
         <div class="table-responsive">
             <table class="table table-bordered" id="dtTransaksi" width="100%" cellspacing="0">
@@ -109,31 +112,36 @@
             </table>
         </div>
 
-        <div class="row">
-            <div class="col">
-            <div class="form-group">
-                <label for="inputEmail3">Total</label>
-                <input type="email" class="form-control" id="total_brg" value="{{ $total }}">
-            </div>
-            </div>
-            <div class="col">
-            <div class="form-group">
-                <label for="inputEmail3">Bayar</label>
-                <input type="email" class="form-control" id="bayar_brg">
-            </div>
-            </div>
-            <div class="col">
-            <div class="form-group">
-                <label for="inputEmail3">Kembali</label>
-                <input type="email" class="form-control" id="kembali_brg">
-            </div>
-            </div>
-        </div>
+        <input type=text class="title-qty hidden" id="transaksi_id" value="{{ $transaksi->id ?? '' }}">
 
-        <div class="d-flex">
-            <button class="btn btn-success mr-2">Bayar</button>
-            <button class="btn btn-primary">Print</button>
-        </div>
+        @if ($transaksi)
+            <div class="row">
+                <div class="col">
+                <div class="form-group">
+                    <label for="inputEmail3">Total</label>
+                    <input type="number" class="form-control" id="total_brg" value="{{ $total }}" readonly>
+                </div>
+                </div>
+                <div class="col">
+                <div class="form-group">
+                    <label for="inputEmail3">Bayar</label>
+                    <input type="number" class="form-control" id="bayar_brg" min="1">
+                </div>
+                </div>
+                <div class="col">
+                <div class="form-group">
+                    <label for="inputEmail3">Kembali</label>
+                    <input type="number" class="form-control" id="kembali_brg" readonly>
+                </div>
+                </div>
+            </div>
+
+            <div class="d-flex">
+                <button class="btn btn-success mr-2" id="closePayment" disabled>Bayar</button>
+                <button class="btn btn-primary" id="cetakSlip" disabled>Print</button>
+            </div>
+        @endif
+        
 
         <div class="modal fade" id="searchProduct" tabindex="-1" role="dialog" aria-labelledby="searchProduct" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -176,7 +184,10 @@
         let valueElement = document.getElementById('value');
 
         $(document).ready(function() {
+            cekDataDetail();
             var selectedIds = [];
+            var barangs = [];
+
             var table = $('#dtSearchBrg').DataTable({
                 processing: true,
                 serverSide: true,
@@ -199,7 +210,6 @@
 
                         var inputQty = document.querySelector('.hidden');
                         
-
                         if ($this.hasClass('btn-primary')) {
                             $this.removeClass('btn-primary').addClass('btn-danger');
                             $icon.removeClass('fa-plus').addClass('fa-minus');
@@ -272,83 +282,100 @@
                         var id = $this.data('id');
                         var barangId = $this.data('barang');
                         var inputId = 'value_' + id;
+                        var hargaJualId = 'harga_' + id;
                         var jumlah = parseInt($('#' + inputId).val());
+                        var maxStok = parseInt($('#' + inputId).attr('max'));
+                        var hargaItem = $('#' + hargaJualId);
+                        var valueHargaItem = parseInt(hargaItem.val());
                         jumlah += 1;
+
+                        if (jumlah > maxStok) {
+                            alert('Jumlah melebihi stok maksimum.')
+                            jumlah =  maxStok;
+                        }
+
+                        let existingItem = barangs.find(item => item.id === id);
+                        if (existingItem) {
+                            existingItem.jumlah_int = jumlah;
+                            existingItem.subtotal_item = existingItem.harga_jual * jumlah;
+                        }
 
                         $('#' + inputId).val(jumlah);
 
-                        $.ajax({
-                            url: '{{ route("products.edit-product-json") }}',  // Ganti dengan endpoint Anda
-                            method: 'POST',
-                            data: {
-                                detail_id: id,
-                                barang_id: barangId,
-                                jumlah: jumlah,
-                                _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
-                            },
-                            success: function(response) {
-                                if (response.error) {
-                                    alert(response.message)
-                                }
-                            },
-                            error: function(xhr) {
-                                alert('An error occurred: ' + xhr.responseText);
-                            }
-                        });
+                        sumBuy();
                     });
 
                     $('#dtTransaksi').off('click', '#decrementBtn').on('click', '#decrementBtn', function() {
                         var $this = $(this);
-                        var rowId = $this.data('id');
+                        var id = $this.data('id');
                         var barangId = $this.data('barang');
+                        var hargaJualId = 'harga_' + id;
+                        var hargaItem = $('#' + hargaJualId);
+                        var valueHargaItem = parseInt(hargaItem.val());
 
-                        var inputId = 'value_' + rowId;
+                        var inputId = 'value_' + id;
                         var jumlah = parseInt($('#' + inputId).val());
 
                         if (jumlah > 0) {
                             jumlah -= 1;
                             $('#' + inputId).val(jumlah);
-
-                            $.ajax({
-                                url: '{{ route("products.edit-product-json") }}',  // Ganti dengan endpoint Anda
-                                method: 'POST',
-                                data: {
-                                    detail_id: rowId,
-                                    barang_id: barangId,
-                                    jumlah: jumlah,
-                                    _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
-                                },
-                                success: function(response) {
-                                    if (response.error) {
-                                        var result = confirm(response.message);
-
-                                        if (result) {
-                                            $.ajax({
-                                                url: '{{ route("transaksi.action-item") }}',  // Ganti dengan endpoint Anda
-                                                method: 'POST',
-                                                data: {
-                                                    detail_id: rowId,
-                                                    barang_id: barangId,
-                                                    jumlah: jumlah,
-                                                    _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
-                                                },
-                                                success: function(response) {
-                                                    
-                                                },
-                                                error: function(xhr) {
-                                                    alert('An error occurred: ' + xhr.responseText);
-                                                }
-                                            });
-                                        } else {
-                                            location.reload();
-                                        }
-                                    }
-                                },
-                                error: function(xhr) {
-                                    alert('An error occurred: ' + xhr.responseText);
-                                }
-                            });
                         }
+
+                        let existingItem = barangs.find(item => item.id === id);
+                        if (existingItem) {
+                            existingItem.jumlah_int = jumlah;
+                            existingItem.subtotal_item = existingItem.harga_jual * jumlah;
+                        }
+
+                        if (jumlah == 0) {
+                            var result = confirm('Anda Yakin Ingin Menghilangkan Item?');
+
+                            if (result) {
+                                $.ajax({
+                                    url: '{{ route("transaksi.remove-item") }}',  // Ganti dengan endpoint Anda
+                                    method: 'POST',
+                                    data: {
+                                        id: id,
+                                        _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                                    },
+                                    success: function(response) {
+                                        alert(response.message)
+                                        location.reload();
+                                    },
+                                    error: function(xhr) {
+                                        alert('An error occurred: ' + xhr.responseText);
+                                    }
+                                });
+                            } else {
+                                location.reload();
+                            }
+                        }
+
+                        sumBuy();
+                    });
+
+                    $('#dtTransaksi').off('click', '#btnRemove').on('click', '#btnRemove', function() {
+                        var $this = $(this);
+                        id = $this.data('id');
+                        barangId = $this.data('barang');
+                        var jumlah = 0; 
+                        let transaksiId = $("#transaksi_id").val();
+
+                        $.ajax({
+                            url: '{{ route("transaksi.remove-item") }}',  // Ganti dengan endpoint Anda
+                            method: 'POST',
+                            data: {
+                                id: id,
+                                _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                            },
+                            success: function(response) {
+                                alert(response.message);
+                                location.reload();
+                            },
+                            error: function(xhr) {
+                                alert('An error occurred: ' + xhr.responseText);
+                            }
+                        });
                     });
                 },
                 initComplete: function () {
@@ -378,31 +405,120 @@
                 });
             });
 
-            // $(document).on('change', '.jumlah_brg', function() {
-            //     var value = $(this).val();
-            //     var id = $(this).data('id');
+            function cekDataDetail() {
+                $.ajax({
+                    url: '{{ route("transaksi.index") }}',  // Ganti dengan endpoint Anda
+                    method: 'GET',
+                    success: function(response) {
+                        const datas = response.data;
 
-            //     if (value < 0) {
-            //         $(this).val(0);
-            //         value = 0;
-            //     }
+                        datas.forEach(element => {
+                            if (!barangs.find(item => item.id === element.id)) {
+                                barangs.push(element);
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Checkout gagal');
+                    }
+                });
+            }
 
-            //     // $.ajax({
-            //     //     url: '{{ route("transaksi.update") }}',
-            //     //     type: 'POST',
-            //     //     data: {
-            //     //         id: id,
-            //     //         value: value,
-            //     //         _token: '{{ csrf_token() }}'
-            //     //     },
-            //     //     success: function(response) {
-            //     //         // alert(response.message)
-            //     //     },
-            //     //     error: function(error) {
-            //     //         console.error('Error occurred:', error);
-            //     //     }
-            //     // });
-            // });
+            function sumBuy() {
+                let sum = 0;
+                if (barangs) {
+                    barangs.forEach(element => {
+                        sum += element.subtotal_item
+                    });
+                }
+
+                var totalBrg = $("#total_brg");
+                var totalBayar = $("#bayar_brg");
+                var totalKembalian = $("#kembali_brg");
+
+                totalBrg.val(sum);
+
+                let valueTotalBayar = totalBayar.val();
+                if (valueTotalBayar > 0) {
+                    var resultKembalian = totalBayar.val() - sum;
+                    totalKembalian.val(resultKembalian);
+                }
+            }
+
+            $('#bayar_brg').on('input', function() {
+                var value = $(this).val();
+                var valueTotalBrg = $("#total_brg").val();
+
+                if (value > 0) {
+                    var kembalian = value - valueTotalBrg;
+                    $("#kembali_brg").val(kembalian);
+                }
+
+                if (value) {
+                    $('#closePayment').removeAttr('disabled');
+                    $('#cetakSlip').removeAttr('disabled');
+                } else {
+                    $('#closePayment').attr('disabled', 'disabled');
+                    $('#cetakSlip').attr('disabled', 'disabled');
+                }
+            });
+
+            $('#btnResetItem').on('click', function() {
+                let transaksiId = $("#transaksi_id").val();
+                $.ajax({
+                    url: '{{ route("transaksi.reset-all-item") }}',  // Ganti dengan endpoint Anda
+                    method: 'POST',
+                    data: {
+                        transaksi_id: transaksiId,
+                        _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                    },
+                    success: function(response) {
+                        alert(response.message)
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+            });
+
+            $('#closePayment').on('click', function() {
+                let transaksiId = $("#transaksi_id").val();
+                var valueTotalBrg = $("#total_brg").val();
+                var valueBayarBrg = $("#bayar_brg").val();
+                var valueKembaliBrg = $("#kembali_brg").val();
+
+                let datas = [];
+                barangs.forEach(element => {
+                    datas.push({
+                        detail_id: element.id,
+                        quantity: element.jumlah_int,
+                        subtotal: element.subtotal_item,
+                    })
+                });
+
+                $.ajax({
+                    url: '{{ route("transaksi.checkout-payment") }}',  // Ganti dengan endpoint Anda
+                    method: 'POST',
+                    data: {
+                        transaksi_id: transaksiId,
+                        total_brg: valueTotalBrg,
+                        bayar_brg: valueBayarBrg,
+                        kembali_brg: valueKembaliBrg,
+                        array_detail_transaksi: datas,
+                        _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                    },
+                    success: function(response) {
+                        alert(response.message)
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+            });
+
+            $('#cetakSlip').on('click', function() {
+                let transaksiId = $("#transaksi_id").val();
+            });
         });
     </script>
 @endsection

@@ -18,14 +18,13 @@ class CreateTransaksiTable extends Migration
             $table->dateTime('tgl_transaksi');
             $table->double('subtotal');
             $table->unsignedBigInteger('kasir_id');
+            $table->string('status_pembayaran');
+            $table->double('total_pembayaran');
+            $table->double('total_kembalian');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('kasir_id')
-                    ->references('id')
-                    ->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade'); 
+            $table->foreign('kasir_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

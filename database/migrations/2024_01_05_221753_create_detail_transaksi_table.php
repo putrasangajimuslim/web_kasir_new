@@ -24,17 +24,8 @@ class CreateDetailTransaksiTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('barang_id')
-                    ->references('id')
-                    ->on('barang')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade'); 
-
-            $table->foreign('transaksi_id')
-                    ->references('id')
-                    ->on('transaksi')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade'); 
+            $table->foreign('transaksi_id')->references('id')->on('transaksi')->onDelete('cascade');
+            $table->foreign('barang_id')->references('id')->on('barang');
         });
     }
 

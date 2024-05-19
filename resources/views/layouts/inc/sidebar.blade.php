@@ -32,10 +32,16 @@
                 <span>Barang</span></a>
         </li>
 
-        <li class="nav-item {{ Route::currentRouteName() === 'transaksi.index' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('transaksi.index')}}">
-                <i class="fas fa-fw fa-tag"></i>
-                <span>Transaksi</span></a>
+        <li class="nav-item {{ Route::currentRouteName() === 'laporan.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('laporan.index')}}">
+                <i class="fas fa-fw fa-file"></i>
+                <span>Laporan</span></a>
+        </li>
+
+        <li class="nav-item {{ Route::currentRouteName() === 'user-profile.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('user-profile.index')}}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>User Profile</span></a>
         </li>
 
         {{-- <li class="nav-item {{ Route::currentRouteName() === 'kategori.index' ? 'active' : '' }}">
@@ -68,6 +74,17 @@
                 <span>Dashboard</span></a>
         </li>
 
+        <li class="nav-item {{ Route::currentRouteName() === 'products.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('products.index')}}">
+                <i class="fas fa-fw fa-tag"></i>
+                <span>Barang</span></a>
+        </li>
+
+        <li class="nav-item {{ Route::currentRouteName() === 'transaksi.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('transaksi.index')}}">
+                <i class="fas fa-fw fa-tag"></i>
+                <span>Transaksi</span></a>
+        </li>
         {{-- <li class="nav-item {{ Route::currentRouteName() === 'kehadiran.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('kehadiran.index')}}">
                 <i class="fas fa-fw fa-book-open"></i>
