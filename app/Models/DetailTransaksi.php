@@ -24,4 +24,8 @@ class DetailTransaksi extends Model
     public function products() {
         return $this->belongsTo(Products::class, 'barang_id', 'id');
     }
+
+    public function transaksi() {
+        return $this->belongsTo(Transaksi::class, 'transaksi_id', 'id');
+    }
 }
