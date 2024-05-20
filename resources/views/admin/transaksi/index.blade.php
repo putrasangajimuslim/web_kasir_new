@@ -452,6 +452,8 @@
                 if (value > 0) {
                     var kembalian = value - valueTotalBrg;
                     $("#kembali_brg").val(kembalian);
+                } else {
+                    $("#kembali_brg").val('');
                 }
 
                 if (value) {
