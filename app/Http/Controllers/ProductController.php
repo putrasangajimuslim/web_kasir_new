@@ -29,28 +29,33 @@ class ProductController extends Controller
                     ->addIndexColumn()
                     ->addColumn('status_exp', function ($row) {
                         $expiration = Carbon::parse($row->date_expired);
-                        $statusExp = $expiration->isPast() ? '<p style="color: red">expired</p>' : 'belum expired';
+                        $statusExp = $expiration->isPast() ? '<p class="text-danger">expired</p>' : '<p class="text-secondary">belum expired</p>';
                         return $statusExp;
                     })
                     ->addColumn('action', function ($row) {
                         $edit = '<a href="' . route('products.edit', $row->id) . '" class="btn btn-primary btn-rounded btn-icon-md mr-2" title="Edit"><i class="fas fa-fw fa-edit"></i></a>';
                         $delete = '<a href="#" data-href="' . route('products.destroy', $row->id) . '" class="btn btn-danger btn-rounded btn-icon-md" title="Delete" data-toggle="modal" data-target="#modal-delete" data-key="' . $row->id . '"><i class="fas fa-fw fa-trash"></i></a>';
+                        
+                        if (Carbon::parse($row->date_expired)->isPast()) {
+                            return '';
+                        }
+
                         return $edit . $delete;
                     })
-                    ->rawColumns(['action'])
+                    ->rawColumns(['status_exp', 'action'])
                     ->toJson();
             } else {
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('status_exp', function ($row) {
                         $expiration = Carbon::parse($row->date_expired);
-                        $statusExp = $expiration->isPast() ? '<p style="color: red">expired</p>' : 'belum expired';
+                        $statusExp = $expiration->isPast() ? '<p class="text-danger">expired</p>' : '<p class="text-secondary">belum expired</p>';
                         return $statusExp;
                     })
                     ->addColumn('action', function ($row) {
                         return '';
                     })
-                    ->rawColumns(['action'])
+                    ->rawColumns(['status_exp', 'action'])
                     ->toJson();
             }
         }
@@ -179,7 +184,7 @@ class ProductController extends Controller
     {
         Products::find($id)->delete();
 
-        return redirect()->route('products.index')->with('message', 'Berhasil Delete Barang');
+        return redirect()->route('products.index')->with('message', 'Berhasil Hapus Barang');
     }
 
     public function generateKodeBarang($lastCode)

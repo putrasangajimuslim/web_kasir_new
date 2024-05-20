@@ -38,15 +38,44 @@ class LaporanController extends Controller
         if ($request->ajax()) {
             // Jika tidak ada transaksi yang cocok, kembalikan JSON kosong
             $detailTransaksi = [];
-    
+
             if (!empty($transaksi)) {
                 $detailTransaksi = DetailTransaksi::whereIn('transaksi_id', $transaksi->pluck('id'))
-                                    ->with(['products', 'transaksi.kasir'])
-                                    ->orderBy('detail_transaksi.id', 'asc');
+                                    ->with(['products' => function($query) {
+                                        $query->withTrashed();
+                                    }, 'transaksi.kasir'])
+                                    ->orderBy('detail_transaksi.id', 'asc')
+                                    ->get();
+
+                // $totalStok= $detailTransaksi->sum(function ($detail) {
+                //     return $detail->products ? $detail->products->stok : 0;
+                // });
+
+                // $totalQty= $detailTransaksi->sum(function ($detail) {
+                //     return $detail->jumlah ? $detail->jumlah : 0;
+                // });
+        
+                // $totalHargaBeli = $detailTransaksi->sum(function ($detail) {
+                //     return $detail->products ? $detail->products->harga_beli : 0;
+                // });
+        
+                // $totalHargaJual = $detailTransaksi->sum('harga_jual');
+        
+                // $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
+
+                $totalKeuntungan = $detailTransaksi->sum('keuntungan');
             }
     
             return DataTables::of($detailTransaksi)
+                ->addColumn('tgl_transaksi', function ($detail) {
+                    return Carbon::parse($detail->transaksi->tanggal)->format('Y-m-d');
+                })
                 ->addIndexColumn()
+                // ->with('totalStok', $totalStok)
+                // ->with('totalQty', $totalQty)
+                // ->with('totalHargaBeli', $totalHargaBeli)
+                // ->with('totalHargaJual', $totalHargaJual)
+                ->with('totalKeuntungan', $totalKeuntungan)
                 ->toJson();
         }
     

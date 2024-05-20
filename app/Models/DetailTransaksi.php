@@ -22,7 +22,7 @@ class DetailTransaksi extends Model
     ];
 
     public function products() {
-        return $this->belongsTo(Products::class, 'barang_id', 'id');
+        return $this->belongsTo(Products::class, 'barang_id', 'id')->withTrashed();
     }
 
     public function transaksi() {

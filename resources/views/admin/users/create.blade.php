@@ -86,27 +86,10 @@
                         <select name="role" id="InputRole" class="form-control">
                             <option value="">--Please Select Role--</option>
                             <option value="admin">Admin</option>
-                            <option value="user">User</option>
+                            <option value="kasir">Kasir</option>
                         </select>
                         @error('role')
                             <span style="color: red;">Silahkan Pilih Role</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="InputIdJ">Kode Jabatan <span style="color: red">*</span></label>
-                        <select name="kode_jabatan" id="InputIdJ" class="form-control">
-                            <option value="">--Please Select Kode Jabatan--</option>
-                            @foreach ($jabatans as $jabatan)
-                                @if (old('kode_jabatan') === $jabatan->kode_jabatan)
-                                    <option value="{{ $jabatan->id }}" selected>{{ $jabatan->kode_jabatan }} - {{ $jabatan->nama_jabatan }}</option>
-                                @else
-                                    <option value="{{ $jabatan->id }}">{{ $jabatan->kode_jabatan }} - {{ $jabatan->nama_jabatan }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        @error('kode_jabatan')
-                            <span style="color: red;">Silahkan Pilih Kode Jabatan</span>
                         @enderror
                     </div>
 

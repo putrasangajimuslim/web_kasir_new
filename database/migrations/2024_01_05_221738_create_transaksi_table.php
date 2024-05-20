@@ -15,7 +15,7 @@ class CreateTransaksiTable extends Migration
     {
         Schema::create('transaksi', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->dateTime('tgl_transaksi');
+            $table->date('tgl_transaksi');
             $table->double('subtotal');
             $table->unsignedBigInteger('kasir_id');
             $table->string('status_pembayaran');

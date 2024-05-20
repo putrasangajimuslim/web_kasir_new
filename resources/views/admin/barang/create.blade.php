@@ -66,7 +66,7 @@
                     </div>
                     <div class="form-group">
                         <label for="InputHargaBeli">Harga Beli <span style="color: red">*</span></label>
-                        <input type="number" class="form-control" id="InputHargaBeli" name="harga_beli" value="{{ old('harga_beli') }}">
+                        <input type="number" class="form-control" id="InputHargaBeli" name="harga_beli" value="{{ old('harga_beli') }}" min="1">
                         @error('harga_beli')
                             <span style="color: red;">Silahkan Isi Harga Beli</span>
                         @enderror
@@ -74,7 +74,7 @@
 
                     <div class="form-group">
                         <label for="InputHargaJual">Harga Jual <span style="color: red">*</span></label>
-                        <input type="number" class="form-control" id="InputHargaJual" name="harga_jual" value="{{ old('harga_jual') }}">
+                        <input type="number" class="form-control" id="InputHargaJual" name="harga_jual" value="{{ old('harga_jual') }}" min="1">
                         @error('harga_jual')
                             <span style="color: red;">Silahkan Isi Harga Jual</span>
                         @enderror
@@ -82,7 +82,7 @@
 
                     <div class="form-group">
                         <label for="InputStok">Stok <span style="color: red">*</span></label>
-                        <input type="number" class="form-control" id="InputStok" name="stok" value="{{ old('stok') }}">
+                        <input type="number" class="form-control" id="InputStok" name="stok" value="{{ old('stok') }}" min="1">
                         @error('stok')
                             <span style="color: red;">Silahkan Isi Stok</span>
                         @enderror

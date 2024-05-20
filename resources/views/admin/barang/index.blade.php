@@ -45,6 +45,28 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="modal-delete" tabindex="-1" role="dialog" aria-labelledby="modal-delete-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-delete-label">Confirm Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this item?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <a id="confirm-delete" href="#" class="btn btn-danger">Yes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 @endsection
@@ -52,6 +74,13 @@
 @section('script')
     <script type="text/javascript">
         $(document).ready(function() {
+            $('#modal-delete').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var href = button.data('href'); // Extract info from data-* attributes
+                var modal = $(this);
+                modal.find('#confirm-delete').attr('href', href);
+            });
+
             var table = $('#dtBarangs').DataTable({
                 processing: true,
                 serverSide: true,

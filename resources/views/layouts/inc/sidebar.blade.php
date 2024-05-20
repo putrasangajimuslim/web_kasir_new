@@ -26,6 +26,12 @@
                 <span>Dashboard</span></a>
         </li>
 
+        <li class="nav-item {{ Route::currentRouteName() === 'users.index' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('users.index')}}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Master User</span></a>
+        </li>
+
         <li class="nav-item {{ Route::currentRouteName() === 'products.index' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('products.index')}}">
                 <i class="fas fa-fw fa-tag"></i>

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -23,25 +24,21 @@ class UserSeeder extends Seeder
             ["nama" => 'Andre', 'tgl_lahir' => '1997-03-02', 'status' => 1, 'no_hp' => '08281221214', 'alamat' => '', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'email' => 'andre@gmail.com', 'created_at' => now(), 'updated_at' => now()],
             ["nama" => 'Parto', 'tgl_lahir' => '1997-01-02', 'status' => 1, 'no_hp' => '08214431121', 'alamat' => '', 'jenis_kelamin' => 'L', 'password' => bcrypt('password'), 'role' => 'kasir', 'email' => 'parto@gmail.com', 'created_at' => now(), 'updated_at' => now()],
         ];
-
-        $currentYear = date('Y');
-
+        
         $newUser = [];
-
+        
         $start = 1;
-
+        
         for ($i = 0; $i < count($dataUserOld); $i++) {
             if ($dataUserOld[$i]['nama'] == 'admin') {
                 $kodeKaryawan = 'admin';
             } else {
-                $kodeKaryawan = $currentYear . $start; // Mengambil dua angka terakhir dari tahun
-                list($tahun, $bulan, $tanggal) = explode("-", $dataUserOld[$i]['tgl_lahir']);
-                $kodeKaryawan .= substr($tahun, -2);
-                $kodeKaryawan .= $bulan;
-                $kodeKaryawan .= $tanggal;
-                $start++;
+                $tglLahir = Carbon::parse($dataUserOld[$i]['tgl_lahir']);
+                $tahun = $tglLahir->format('Y');
+                $bulan = $tglLahir->format('m');
+                $kodeKaryawan = $bulan . $tahun;
             }
-
+        
             $newUser[] = [
                 'kode_karyawan' => $kodeKaryawan,
                 'nama' => $dataUserOld[$i]['nama'],

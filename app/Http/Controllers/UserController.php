@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Jabatan;
 use App\Models\User;
+use DateTime;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     public function index() {
-        $users = User::with('jabatan')->get();
+        $users = User::get();
         return view('admin.users.index', ['users' => $users]);
     }
 
     public function create() {
-        $jabatans = Jabatan::get();
-        return view('admin.users.create', ['jabatans' => $jabatans]);
+        return view('admin.users.create');
     }
 
     public function store(Request $request) {
@@ -27,7 +27,6 @@ class UserController extends Controller
             'alamat' => 'required',
             'jenis_kelamin' => 'required',
             'role' => 'required',
-            'kode_jabatan' => 'required',
             'password' => 'required',
        ]);
 
@@ -40,16 +39,11 @@ class UserController extends Controller
          return redirect()->back()->with('error', 'Maaf User Baru Tersebut sudah ada');
        }
 
-       $countUsers = User::count();
-       
-       $currentYear = date('Y');
-       
-       $kodeKaryawan = $currentYear . $countUsers + 1;
+       $tgl_lahir = new DateTime($request->tgl_lahir);
 
-       list($tahun, $bulan, $tanggal) = explode("-", $request->tgl_lahir);
-        $kodeKaryawan .= substr($tahun, -2);
-        $kodeKaryawan .= $bulan;
-        $kodeKaryawan .= $tanggal;
+       $bulan_lahir = $tgl_lahir->format('m');
+       $tahun_lahir = $tgl_lahir->format('Y');
+       $kodeKaryawan = $bulan_lahir . $tahun_lahir; 
 
        $users = new User();
         $users->kode_karyawan = $kodeKaryawan;
@@ -62,7 +56,6 @@ class UserController extends Controller
         $users->alamat = $request->alamat;
         $users->jenis_kelamin = $request->jenis_kelamin;
         $users->role = $request->role;
-        $users->id_jabatan = $request->kode_jabatan;
         $users->status = 1;
         $users->save();
 
@@ -70,9 +63,8 @@ class UserController extends Controller
     }
 
     public function edit($id) {
-        $jabatans = Jabatan::get();
         $user = User::where('id', $id)->first();
-        return view('admin.users.edit', ['user' => $user, 'jabatans' => $jabatans]);
+        return view('admin.users.edit', ['user' => $user]);
     }
 
     public function update(Request $request) {
@@ -84,7 +76,6 @@ class UserController extends Controller
             'alamat' => 'required',
             'jenis_kelamin' => 'required',
             'role' => 'required',
-            'kode_jabatan' => 'required',
             'status' => 'required',
        ]);
 
@@ -97,7 +88,6 @@ class UserController extends Controller
        $gender = $request->alamat;
        $password = $request->password;
        $role = $request->role;
-       $kodeJ = $request->kode_jabatan;
        $status = $request->status;
 
        $absen = User::where('id', $id)->first();
@@ -109,7 +99,6 @@ class UserController extends Controller
        $absen->jenis_kelamin = $gender;
        $absen->password = !empty($password) ? bcrypt($password) : '';
        $absen->role = $role;
-       $absen->id_jabatan = $kodeJ;
        $absen->status = $status;
        $absen->save();
 

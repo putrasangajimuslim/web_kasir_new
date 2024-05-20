@@ -39,7 +39,6 @@
                         <th>Alamat</th>
                         <th>Jenis Kelamin</th>
                         <th>Role</th>
-                        <th>Jabatan</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -71,7 +70,6 @@
                         <td>{{ $user->alamat }}</td>
                         <td>{{ $gender }}</td>
                         <td>{{ $user->role }}</td>
-                        <td>{{ $user->jabatan->nama_jabatan }}</td>
                         <td>
                             <a href="{{ route('users.edit', ['id'=> $user->id]) }}"  class="btn btn-primary" id="btnEdit">Edit</a>
                             <button class="btn btn-danger btnDel" id="btnEdit" data-toggle="modal" data-target="#deleteModal" data-url="{{ route('users.destroy', ['id' => $user->id]) }}"><i class="fas fa-trash"></i></button>

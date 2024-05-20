@@ -68,16 +68,24 @@
             <table class="table table-bordered" id="dtLaporans" width="100%" cellspacing="0">
                 <thead>
                     <tr>
+                        <th>Tanggal Transaksi</th>
                         <th>Nama Barang</th>
+                        <th>Qty</th>
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
-                        <th>Stok</th>
                         <th>Masa Expired</th>
                         <th>Kasir</th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">Total Terjual</td>
+                        <td style="background-color: #17A975; color: #fff;">Keuntungan</td>
+                        <td style="background-color: #17A975; color: #fff;"></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
@@ -96,16 +104,26 @@
                 d.todayFilter = $('#todayFilter').val();
                 d.bulan = $('#bulan').val();
                 d.tahun = $('#tahun').val();
+            },
+            dataSrc: function(json) {
+                // Update footer with totals
+                // $('#dtLaporans tfoot td').eq(1).text(json.totalStok);
+                // $('#dtLaporans tfoot td').eq(2).text(json.totalQty);
+                // $('#dtLaporans tfoot td').eq(3).text(json.totalHargaBeli);
+                // $('#dtLaporans tfoot td').eq(4).text(json.totalHargaJual);
+                $('#dtLaporans tfoot td').eq(2).text(json.totalKeuntungan);
+                return json.data;
             }
         },
         columns: [
+            { data: 'transaksi.tgl_transaksi', name: 'transaksi.tgl_transaksi' },
             { data: 'products.nama_barang', name: 'products.nama_barang' },
+            { data: 'jumlah', name: 'jumlah' },
             { data: 'products.harga_beli', name: 'products.harga_beli' },
             { data: 'harga_jual', name: 'harga_jual' },
-            { data: 'products.stok', name: 'products.stok' },
             { data: 'products.date_expired', name: 'products.date_expired' },
             { data: 'transaksi.kasir.nama', name: 'transaksi.kasir.nama' },
-        ],
+        ]
     });
 
     window.filterByDate = function() {

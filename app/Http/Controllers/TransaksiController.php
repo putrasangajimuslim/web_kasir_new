@@ -18,8 +18,6 @@ class TransaksiController extends Controller
 
         $role = $user->role;
 
-        $total = 0;
-
         $today = Carbon::now()->toDateString(); 
 
         $transaksi = Transaksi::where('tgl_transaksi', $today)
