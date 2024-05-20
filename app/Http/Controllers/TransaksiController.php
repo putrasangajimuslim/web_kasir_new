@@ -82,9 +82,9 @@ class TransaksiController extends Controller
         $today = Carbon::now()->toDateString(); // Ubah menjadi string tanggal saja
         $jumlah = 1;
 
-        $transaksi = Transaksi::where('tgl_transaksi', $today)
-            ->where('kasir_id', $user->id)
-            ->first();
+        $transaksi = Transaksi::where('kasir_id', $user->id)
+                    ->where('status_pembayaran', '!=', 'Done')
+                    ->first();
 
         foreach ($selectedIds as $productId) {
             $product = Products::find($productId);

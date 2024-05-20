@@ -448,6 +448,7 @@
             $('#bayar_brg').on('input', function() {
                 var value = $(this).val();
                 var valueTotalBrg = $("#total_brg").val();
+                var valueKembalianBrg = $("#kembali_brg").val();
 
                 if (value > 0) {
                     var kembalian = value - valueTotalBrg;
@@ -455,7 +456,7 @@
                 } else {
                     $("#kembali_brg").val('');
                 }
-
+                
                 if (value) {
                     $('#closePayment').removeAttr('disabled');
                     $('#cetakSlip').removeAttr('disabled');
