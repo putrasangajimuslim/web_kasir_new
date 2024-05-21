@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LaporanExportExcel;
 use App\Models\DetailTransaksi;
 use App\Models\Products;
 use App\Models\Transaksi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+
 use DataTables;
 
 class LaporanController extends Controller
@@ -84,4 +91,64 @@ class LaporanController extends Controller
             'years' => $years,
         ]);
     }    
+
+    public function exportExcel(Request $request) {
+        $totalKeuntungan = $request->total_keuntungan;
+        $data_laporans = json_decode($request->data_laporans);
+        
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Tambahkan header di baris pertama
+        $sheet->setCellValue('A1', 'Tgl/Bulan/Tahun');
+        $sheet->setCellValue('B1', '');
+
+        $labels = ['Nama Barang', 'Qty', 'Harga Beli', 'Harga Jual', 'Masa Expired', 'Kasir'];
+        $startColumn = 'A';
+        foreach ($labels as $index => $label) {
+            $cell = $startColumn . '3';
+            $sheet->setCellValue($cell, $label);
+        
+            // Menambahkan styling untuk header
+            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('1E90FF'); // Warna hijau
+            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FFFFFFFF'); // Warna putih
+            $startColumn++;
+        }
+
+        // Mendapatkan indeks baris awal dari data
+        $startRow = 4;
+
+        // Memasukkan data dari $data_laporans
+        foreach ($data_laporans as $index => $data_laporan) {
+            // Reset startColumn ke A
+            $startColumn = 'A';
+
+            // Menentukan indeks baris untuk setiap data
+            $currentRow = $startRow + $index;
+
+            // Memasukkan data ke setiap kolom
+            $sheet->setCellValue('A' . $currentRow, $data_laporan->nama_barang);
+            $sheet->setCellValue('B' . $currentRow, $data_laporan->jumlah_transaksi);
+            $sheet->setCellValue('C' . $currentRow, $data_laporan->harga_beli);
+            $sheet->setCellValue('D' . $currentRow, $data_laporan->harga_jual);
+            $sheet->setCellValue('E' . $currentRow, $data_laporan->masa_exp);
+            $sheet->setCellValue('F' . $currentRow, $data_laporan->nama_kasir);
+
+            // Menambahkan border tipis untuk setiap sel data
+            for ($i = 0; $i < count($labels); $i++) {
+                $cell = chr(ord('A') + $i) . $currentRow;
+                $sheet->getStyle($cell)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            }
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'laporan-penjualan.xlsx';
+        $filePath = storage_path('app/public/' . $fileName);
+
+        // Simpan file di storage
+        $writer->save($filePath);
+
+        // Kembalikan respon download
+        return response()->download($filePath, $fileName)->deleteFileAfterSend(true);
+    }
 }

@@ -176,16 +176,12 @@ class TransaksiController extends Controller
         $total_brg = $request->total_brg;
         $bayar_brg = $request->bayar_brg;
         $kembali_brg = $request->kembali_brg;
-
-        setlocale(LC_TIME, 'id_ID');
-
-        // Get the current date
-        $currentDate = time(); // Get the current Unix timestamp
-
-        // Format the date as "Day, DD Month YYYY" in Indonesian
-        $tglTransaksi = strftime('%A, %e %B %Y', $currentDate);
-
+        $tgl_transaksi = $request->tgl_transaksi;
         $barangs = json_decode($request->barangs);
+
+        $date = Carbon::parse($tgl_transaksi);
+
+        $tglTransaksi = $date->translatedFormat('l, d F Y');
 
         $pdf = Pdf::loadView('pdf.slip', ['datas' => $barangs, 'transaksi_id' => $transaksi_id, 'total_brg' => $total_brg, 'bayar_brg' => $bayar_brg, 'kembali_brg' => $kembali_brg, 'tgl_transaksi' => $tglTransaksi]);
 

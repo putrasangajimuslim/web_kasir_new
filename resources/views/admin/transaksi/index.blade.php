@@ -149,6 +149,7 @@
             <input type="hidden" id="bayar_brg_field" name="bayar_brg">
             <input type="hidden" id="kembali_brg_field" name="kembali_brg">
             <input type="hidden" id="barangs_field" name="barangs">
+            <input type="hidden" id="tgl_transaksi" name="tgl_transaksi" value="{{ $tgl }}">
         </form>
 
         <div class="modal fade" id="searchProduct" tabindex="-1" role="dialog" aria-labelledby="searchProduct" aria-hidden="true">
@@ -532,7 +533,7 @@
                 let totalBrg = $("#total_brg").val();
                 let bayarBrg = $("#bayar_brg").val();
                 let kembaliBrg = $("#kembali_brg").val();
-
+                
                 $("#transaksi_id_field").val(transaksiId);
                 $("#total_brg_field").val(totalBrg);
                 $("#bayar_brg_field").val(bayarBrg);

@@ -77,6 +77,7 @@ Route::middleware(['isLogin'])->group(function () {
 
     Route::prefix('laporan')->as('laporan.')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('index');
+        Route::post('export-laporan', [LaporanController::class, 'exportExcel'])->name('export-laporan');
     });
 
     Route::prefix('user-profile')->as('user-profile.')->group(function () {

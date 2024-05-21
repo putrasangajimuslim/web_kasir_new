@@ -13,7 +13,9 @@
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
+        "maatwebsite/excel": "^1.1",
         "nesbot/carbon": "^2.72",
+        "phpoffice/phpspreadsheet": "^1.12",
         "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {

@@ -16,7 +16,7 @@
         }
         table td {
             border: none;
-            padding
+            margin-bottom: 10px
         }
     </style>
 </head>
