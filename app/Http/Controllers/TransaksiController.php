@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\DetailTransaksi;
 use App\Models\Products;
 use App\Models\Transaksi;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DataTables;
+use PDF;
 
 class TransaksiController extends Controller
 {
@@ -176,11 +176,20 @@ class TransaksiController extends Controller
         $total_brg = $request->total_brg;
         $bayar_brg = $request->bayar_brg;
         $kembali_brg = $request->kembali_brg;
-        $barangs = $request->barangs;
 
-        $pdf = Pdf::loadView('pdf.slip-payment', ['datas' => $barangs, 'transaksi_id' => $transaksi_id, 'total_brg' => $total_brg, 'bayar_brg' => $bayar_brg, 'kembali_brg' => $kembali_brg]);
+        setlocale(LC_TIME, 'id_ID');
 
-        return $pdf->download('transaction-slip.pdf');
+        // Get the current date
+        $currentDate = time(); // Get the current Unix timestamp
+
+        // Format the date as "Day, DD Month YYYY" in Indonesian
+        $tglTransaksi = strftime('%A, %e %B %Y', $currentDate);
+
+        $barangs = json_decode($request->barangs);
+
+        $pdf = Pdf::loadView('pdf.slip', ['datas' => $barangs, 'transaksi_id' => $transaksi_id, 'total_brg' => $total_brg, 'bayar_brg' => $bayar_brg, 'kembali_brg' => $kembali_brg, 'tgl_transaksi' => $tglTransaksi]);
+
+        return $pdf->download('slip-transaksi.pdf');
     }
 
     public function removeItem(Request $request) {

@@ -142,6 +142,14 @@
             </div>
         @endif
         
+        <form id="slipForm" action="transaksi/cetak-slip" method="POST" target="_blank">
+            @csrf
+            <input type="hidden" id="transaksi_id_field" name="transaksi_id">
+            <input type="hidden" id="total_brg_field" name="total_brg">
+            <input type="hidden" id="bayar_brg_field" name="bayar_brg">
+            <input type="hidden" id="kembali_brg_field" name="kembali_brg">
+            <input type="hidden" id="barangs_field" name="barangs">
+        </form>
 
         <div class="modal fade" id="searchProduct" tabindex="-1" role="dialog" aria-labelledby="searchProduct" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -525,6 +533,11 @@
                 let bayarBrg = $("#bayar_brg").val();
                 let kembaliBrg = $("#kembali_brg").val();
 
+                $("#transaksi_id_field").val(transaksiId);
+                $("#total_brg_field").val(totalBrg);
+                $("#bayar_brg_field").val(bayarBrg);
+                $("#kembali_brg_field").val(kembaliBrg);
+
                 let newBarangs = [];
 
                 barangs.forEach(element => {
@@ -544,29 +557,9 @@
                     }
                 });
 
-                $.ajax({
-                    url: '{{ route("transaksi.cetak-slip") }}',  // Ganti dengan endpoint Anda
-                    method: 'POST',
-                    data: {
-                        transaksi_id: transaksiId,
-                        total_brg: totalBrg,
-                        bayar_brg: bayarBrg,
-                        kembali_brg: kembaliBrg,
-                        barangs: newBarangs,
-                        _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
-                    },
-                    success: function(response) {
-                        // let blob = new Blob([response], { type: 'application/pdf' });
-                        // let link = document.createElement('a');
-                        // link.href = window.URL.createObjectURL(blob);
+                $("#barangs_field").val(JSON.stringify(newBarangs));
 
-                        // console.log(response);""
-                        // link.download = 'transaction-slip.pdf';
-                        // link.click();
-                    },
-                    error: function(xhr, status, error) {
-                    }
-                });
+                $("#slipForm").submit();
             });
         });
     </script>
