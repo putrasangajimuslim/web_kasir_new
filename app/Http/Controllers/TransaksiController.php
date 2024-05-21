@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DetailTransaksi;
 use App\Models\Products;
 use App\Models\Transaksi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -168,6 +169,18 @@ class TransaksiController extends Controller
         }
 
         return response()->json(['error' => 'false', 'message' => 'Transaksi Pembayaran Berhasil']);
+    }
+
+    public function cetakSlip(Request $request) {
+        $transaksi_id = $request->transaksi_id;
+        $total_brg = $request->total_brg;
+        $bayar_brg = $request->bayar_brg;
+        $kembali_brg = $request->kembali_brg;
+        $barangs = $request->barangs;
+
+        $pdf = Pdf::loadView('pdf.slip-payment', ['datas' => $barangs, 'transaksi_id' => $transaksi_id, 'total_brg' => $total_brg, 'bayar_brg' => $bayar_brg, 'kembali_brg' => $kembali_brg]);
+
+        return $pdf->download('transaction-slip.pdf');
     }
 
     public function removeItem(Request $request) {

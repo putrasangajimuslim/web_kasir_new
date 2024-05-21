@@ -19,37 +19,37 @@ class UserController extends Controller
     }
 
     public function store(Request $request) {
-        $validateData = $request->validate([
-            'nama' => 'required',
-            'email' => 'required',
-            'tgl_lahir' => 'required',
-            'no_hp' => 'required',
-            'alamat' => 'required',
-            'jenis_kelamin' => 'required',
-            'role' => 'required',
-            'password' => 'required',
-       ]);
+            $validateData = $request->validate([
+                'nama' => 'required',
+                'email' => 'required',
+                'tgl_lahir' => 'required',
+                'no_hp' => 'required',
+                'alamat' => 'required',
+                'jenis_kelamin' => 'required',
+                'role' => 'required',
+                'password' => 'required',
+        ]);
 
-       $checkNewUsers = User::where('nama', $request->nama)
-                                ->where('email', $request->email)
-                                ->where('tgl_lahir', $request->tgl_lahir)
-                                ->first();
+        $checkNewUsers = User::where('nama', $request->nama)
+                                    ->where('email', $request->email)
+                                    ->where('tgl_lahir', $request->tgl_lahir)
+                                    ->first();
 
-       if (!empty($checkNewUsers)) {
-         return redirect()->back()->with('error', 'Maaf User Baru Tersebut sudah ada');
-       }
+        if (!empty($checkNewUsers)) {
+            return redirect()->back()->with('error', 'Maaf User Baru Tersebut sudah ada');
+        }
 
-       $tgl_lahir = new DateTime($request->tgl_lahir);
+        $tgl_lahir = new DateTime($request->tgl_lahir);
 
-       $bulan_lahir = $tgl_lahir->format('m');
-       $tahun_lahir = $tgl_lahir->format('Y');
-       $kodeKaryawan = $bulan_lahir . $tahun_lahir; 
+        $bulan_lahir = $tgl_lahir->format('m');
+        $tahun_lahir = $tgl_lahir->format('Y');
+        $kodeKaryawan = $bulan_lahir . $tahun_lahir; 
 
-       $userCount = User::count();
-       $sequenceNumber = $userCount + 1;
-       $kodeKaryawan = str_pad($sequenceNumber, 2, '0', STR_PAD_LEFT) . $bulan_lahir . $tahun_lahir;
+        $userCount = User::count();
+        $sequenceNumber = $userCount + 1;
+        $kodeKaryawan = $sequenceNumber . $bulan_lahir . substr($tahun_lahir, -2);
 
-       $users = new User();
+        $users = new User();
         $users->kode_karyawan = $kodeKaryawan;
         $users->nama = $request->nama;
         $users->email = $request->email;

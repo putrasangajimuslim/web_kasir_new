@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         
         $newUser = [];
         
-        $start = 1;
+        $start = 0;
         
         for ($i = 0; $i < count($dataUserOld); $i++) {
             if ($dataUserOld[$i]['nama'] == 'admin') {
@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
                 $tahun = $tglLahir->format('Y');
                 $bulan = $tglLahir->format('m');
                 $start++;
-                $kodeKaryawan = $start. $bulan . $tahun;
+                $kodeKaryawan = $start. $bulan . substr($tahun, -2);
             }
         
             $newUser[] = [

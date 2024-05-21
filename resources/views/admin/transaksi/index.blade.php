@@ -521,6 +521,52 @@
 
             $('#cetakSlip').on('click', function() {
                 let transaksiId = $("#transaksi_id").val();
+                let totalBrg = $("#total_brg").val();
+                let bayarBrg = $("#bayar_brg").val();
+                let kembaliBrg = $("#kembali_brg").val();
+
+                let newBarangs = [];
+
+                barangs.forEach(element => {
+                    let exists = newBarangs.some(item => item.barang_id === element.barang_id);
+
+                    if (!exists) {
+                        newBarangs.push({
+                            barang_id: element.barang_id,
+                            kode_barang: element.products.kode_barang,
+                            nama_brg: element.products.nama_barang,
+                            merk: element.products.merk,
+                            harga_beli: element.products.harga_beli,
+                            harga_jual: element.products.harga_jual,
+                            qty: element.jumlah_int,
+                            subtotal_item: element.subtotal_item,
+                        });
+                    }
+                });
+
+                $.ajax({
+                    url: '{{ route("transaksi.cetak-slip") }}',  // Ganti dengan endpoint Anda
+                    method: 'POST',
+                    data: {
+                        transaksi_id: transaksiId,
+                        total_brg: totalBrg,
+                        bayar_brg: bayarBrg,
+                        kembali_brg: kembaliBrg,
+                        barangs: newBarangs,
+                        _token: '{{ csrf_token() }}' // Jika menggunakan Laravel, sertakan token CSRF
+                    },
+                    success: function(response) {
+                        // let blob = new Blob([response], { type: 'application/pdf' });
+                        // let link = document.createElement('a');
+                        // link.href = window.URL.createObjectURL(blob);
+
+                        // console.log(response);
+                        // link.download = 'transaction-slip.pdf';
+                        // link.click();
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
             });
         });
     </script>

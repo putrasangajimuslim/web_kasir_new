@@ -67,6 +67,7 @@ Route::middleware(['isLogin'])->group(function () {
         Route::get('create', [TransaksiController::class, 'create'])->name('create');
         Route::post('store', [TransaksiController::class, 'store'])->name('store');
         Route::get('edit/{id}', [TransaksiController::class, 'edit'])->name('edit');
+        Route::post('cetak-slip', [TransaksiController::class, 'cetakSlip'])->name('cetak-slip');
         Route::post('update', [TransaksiController::class, 'update'])->name('update');
         Route::post('checkout-payment', [TransaksiController::class, 'checkOutPayment'])->name('checkout-payment');
         Route::post('remove-item', [TransaksiController::class, 'removeItem'])->name('remove-item');
