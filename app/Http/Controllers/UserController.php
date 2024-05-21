@@ -45,6 +45,10 @@ class UserController extends Controller
        $tahun_lahir = $tgl_lahir->format('Y');
        $kodeKaryawan = $bulan_lahir . $tahun_lahir; 
 
+       $userCount = User::count();
+       $sequenceNumber = $userCount + 1;
+       $kodeKaryawan = str_pad($sequenceNumber, 2, '0', STR_PAD_LEFT) . $bulan_lahir . $tahun_lahir;
+
        $users = new User();
         $users->kode_karyawan = $kodeKaryawan;
         $users->nama = $request->nama;

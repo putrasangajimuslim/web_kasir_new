@@ -36,7 +36,8 @@ class UserSeeder extends Seeder
                 $tglLahir = Carbon::parse($dataUserOld[$i]['tgl_lahir']);
                 $tahun = $tglLahir->format('Y');
                 $bulan = $tglLahir->format('m');
-                $kodeKaryawan = $bulan . $tahun;
+                $start++;
+                $kodeKaryawan = $start. $bulan . $tahun;
             }
         
             $newUser[] = [
