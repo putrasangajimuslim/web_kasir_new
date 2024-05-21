@@ -560,7 +560,7 @@
                         // let link = document.createElement('a');
                         // link.href = window.URL.createObjectURL(blob);
 
-                        // console.log(response);
+                        // console.log(response);""
                         // link.download = 'transaction-slip.pdf';
                         // link.click();
                     },
