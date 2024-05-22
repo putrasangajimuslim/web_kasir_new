@@ -93,6 +93,7 @@ class LaporanController extends Controller
     }    
 
     public function exportExcel(Request $request) {
+        $tgl_transaksi = $request->tgl_transaksi;
         $totalKeuntungan = $request->total_keuntungan;
         $data_laporans = json_decode($request->data_laporans);
         
@@ -100,8 +101,8 @@ class LaporanController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
 
         // Tambahkan header di baris pertama
-        $sheet->setCellValue('A1', 'Tgl/Bulan/Tahun');
-        $sheet->setCellValue('B1', '');
+        $sheet->setCellValue('A1', 'Tgl/Bulan/Tahun: ');
+        $sheet->setCellValue('B1', $tgl_transaksi);
 
         $labels = ['Nama Barang', 'Qty', 'Harga Beli', 'Harga Jual', 'Masa Expired', 'Kasir'];
         $startColumn = 'A';
@@ -139,6 +140,36 @@ class LaporanController extends Controller
                 $cell = chr(ord('A') + $i) . $currentRow;
                 $sheet->getStyle($cell)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
             }
+        }
+
+        $totalRow = $startRow + count($data_laporans);
+        $sheet->setCellValue('A' . $totalRow, 'Total');
+        $sheet->mergeCells('A' . $totalRow . ':D' . $totalRow);
+
+        $totalQty = array_sum(array_column($data_laporans, 'jumlah_transaksi'));
+        $totalHargaBeli = array_sum(array_column($data_laporans, 'harga_beli'));
+        $totalHargaJual = array_sum(array_column($data_laporans, 'harga_jual'));
+
+        $sheet->setCellValue('B' . $totalRow, $totalQty);
+        $sheet->setCellValue('C' . $totalRow, $totalHargaBeli);
+        $sheet->setCellValue('D' . $totalRow, $totalHargaJual);
+
+        // Menambahkan styling untuk kolom total
+        $sheet->getStyle('A' . $totalRow . ':D' . $totalRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFFFF'); // Warna putih
+        $sheet->getStyle('A' . $totalRow . ':D' . $totalRow)->getFont()->setBold(true);
+
+        $sheet->setCellValue('E' . $totalRow, 'Keuntungan');
+        $sheet->setCellValue('F' . $totalRow, $totalKeuntungan);
+
+        // Menambahkan styling untuk kolom keuntungan
+        $sheet->getStyle('E' . $totalRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('17A975'); // Warna hijau muda
+        $sheet->getStyle('F' . $totalRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('17A975'); // Warna hijau muda
+        $sheet->getStyle('E' . $totalRow . ':F' . $totalRow)->getFont()->setBold(true);
+
+        // Menambahkan border tipis untuk total dan keuntungan
+        for ($i = 0; $i < 6; $i++) {
+            $cell = chr(ord('A') + $i) . $totalRow;
+            $sheet->getStyle($cell)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
         }
 
         $writer = new Xlsx($spreadsheet);

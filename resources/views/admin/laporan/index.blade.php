@@ -91,6 +91,7 @@
 
         <form id="exportLaporan" action="laporan/export-laporan" method="POST" target="_blank">
             @csrf
+            <input type="hidden" id="tgl_transaksi" name="tgl_transaksi">
             <input type="hidden" id="total_keuntungan" name="total_keuntungan">
             <input type="hidden" id="data_laporans" name="data_laporans">
         </form>
@@ -144,6 +145,19 @@
         }
 
         $('#btnExport').on('click', function() {
+            let date = '';
+            let monthFilter = $('#bulan').val();
+            let yearFilter = $('#tahun').val();
+            let todayFilter = $('#todayFilter').val();
+
+            if (todayFilter) {
+                date = todayFilter;
+            } else if (monthFilter && yearFilter) {
+                date = `${monthFilter} ${yearFilter}`;
+            }
+            
+            $('#tgl_transaksi').val(date);
+
             var originalData = table.rows().data().toArray();
             var filteredData = getFilteredData();
             let dataEmpty = '';
