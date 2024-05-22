@@ -125,7 +125,6 @@ class ProductController extends Controller
         $latestKodeBarang = Products::latest()->first();
 
         $kodeBarang = empty($latestKodeBarang) ? 'BR01' : $this->generateKodeBarang($latestKodeBarang->kode_barang);
-
         if (empty($cekBarang)) {
             $barang = new Products();
             $barang->kode_barang = $kodeBarang;
@@ -191,12 +190,24 @@ class ProductController extends Controller
     {
         $lastNumber = (int) substr($lastCode, 2);
 
-        // Menambahkan 1 ke angka terakhir
+        // Initialize the next number
         $nextNumber = $lastNumber + 1;
-
-        // Membuat kode dengan format "BR" dan menggunakan sprintf untuk menambahkan angka dengan format 3 digit (misal: BR001)
-        $nextCode = sprintf("BR%02d", $nextNumber);
-
-        return $nextCode;
+    
+        // Loop to find the first deleted code to reuse, if any
+        for ($i = 1; $i < $nextNumber; $i++) {
+            $checkOldCode = sprintf("BR%02d", $i);
+            $checkKodeBrgDeleted = Products::withTrashed()->where('kode_barang', $checkOldCode)->first();
+    
+            if ($checkKodeBrgDeleted && $checkKodeBrgDeleted->trashed()) {
+                // If the code exists but is soft-deleted, use this code
+                $nextNumber = $i;
+                break;
+            }
+        }
+    
+        // Generate the new product code
+        $newProductCode = sprintf("BR%02d", $nextNumber);
+        
+        return $newProductCode;
     }
 }

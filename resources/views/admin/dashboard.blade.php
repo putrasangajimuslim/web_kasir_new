@@ -72,7 +72,7 @@
                 data: {
                     labels: labels, // Months labels
                     datasets: [{
-                        label: 'Monthly Transactions',
+                        label: 'Data Transaksi',
                         data: data, // Monthly transactions data
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
                         borderColor: 'rgba(54, 162, 235, 1)',
