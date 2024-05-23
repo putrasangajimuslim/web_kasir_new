@@ -47,9 +47,10 @@
                                      <span style="color: red;">Silahkan Isi Username</span>
                                   @enderror
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" style="position: relative">
                                   <label for="password">Password <span style="color: red;">*</span></label>
                                   <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                  <i class="fas fa-fw fa-eye" id="togglePassword" style="position: absolute; top: 72%; right: 10px; transform: translateY(-50%); cursor: pointer;"></i>
                                   @error('password')
                                       <span style="color: red;">Silahkan Isi Password</span>
                                   @enderror
@@ -83,7 +84,17 @@
     @include('layouts.inc.script')
     <script>
         $(document).ready(function() {
-            
+            $('#togglePassword').click(function() {
+                const passwordField = $('#password');
+                const passwordFieldType = passwordField.attr('type');
+                if (passwordFieldType === 'password') {
+                    passwordField.attr('type', 'text');
+                    $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    passwordField.attr('type', 'password');
+                    $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
         });
       </script>
 </body>
