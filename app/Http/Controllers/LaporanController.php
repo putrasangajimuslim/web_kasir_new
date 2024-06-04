@@ -189,8 +189,6 @@ class LaporanController extends Controller
         $sheet->mergeCells('A' . $totalRow . ':B' . $totalRow);
 
         $totalQty = array_sum(array_column($data_laporans, 'jumlah_transaksi'));
-        $totalHargaBeli = array_sum(array_column($data_laporans, 'harga_beli'));
-        $totalHargaJual = array_sum(array_column($data_laporans, 'harga_jual'));
 
         $sheet->setCellValue('C' . $totalRow, $totalQty);
         $sheet->setCellValue('D' . $totalRow, $totalHargaBeli);
