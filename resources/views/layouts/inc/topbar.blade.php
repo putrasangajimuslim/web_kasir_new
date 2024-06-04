@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
     <div style="margin-left: 24px; display: flex;">
-        <p style="font-size: 20px; margin: auto 20px">Ekasir</p>
+        <p style="font-size: 20px; margin: auto 20px">Koperasi Al Hasanah</p>
         <img src="{{ asset('img/store.png') }}" style="width: 40px;">
     </div>    
 

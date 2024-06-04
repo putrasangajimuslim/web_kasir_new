@@ -70,6 +70,7 @@
                     <tr>
                         <th>Tanggal Transaksi</th>
                         <th>Nama Barang</th>
+                        <th>Stok Barang</th>
                         <th>Qty</th>
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
@@ -81,9 +82,13 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5">Total</td>
-                        <td style="background-color: #17A975; color: #fff;">Keuntungan</td>
+                        <td colspan="2">Total</td>
+                        <td>x 1</td>
+                        <td>x 2</td>
+                        <td>x 3</td>
+                        <td>x 4</td>
                         <td style="background-color: #17A975; color: #fff;"></td>
+                        <td style="background-color: #f61d1d; color: #fff;"></td>
                     </tr>
                 </tfoot>
             </table>
@@ -115,16 +120,19 @@
                 dataSrc: function(json) {
                     // Update footer with totals
                     // $('#dtLaporans tfoot td').eq(1).text(json.totalStok);
-                    // $('#dtLaporans tfoot td').eq(2).text(json.totalQty);
-                    // $('#dtLaporans tfoot td').eq(3).text(json.totalHargaBeli);
-                    // $('#dtLaporans tfoot td').eq(4).text(json.totalHargaJual);
-                    $('#dtLaporans tfoot td').eq(2).text(json.totalKeuntungan);
+                    $('#dtLaporans tfoot td').eq(1).text(json.totalAllStok);
+                    $('#dtLaporans tfoot td').eq(2).text(json.totalQty);
+                    $('#dtLaporans tfoot td').eq(3).text(json.totalHargaBeli);
+                    $('#dtLaporans tfoot td').eq(4).text(json.totalHargaJual);
+                    $('#dtLaporans tfoot td').eq(5).text(json.totalKeuntungan);
+                    $('#dtLaporans tfoot td').eq(6).text(json.totalKerugian);
                     return json.data;
                 }
             },
             columns: [
                 { data: 'transaksi.tgl_transaksi', name: 'transaksi.tgl_transaksi' },
                 { data: 'products.nama_barang', name: 'products.nama_barang' },
+                { data: 'products.stok', name: 'products.stok' },
                 { data: 'jumlah', name: 'jumlah' },
                 { data: 'products.harga_beli', name: 'products.harga_beli' },
                 { data: 'harga_jual', name: 'harga_jual' },
@@ -168,9 +176,13 @@
                 dataEmpty = 'Data Tidak Ditemukan';
             }
 
-            accumulationProfirt = 0;
+            totalHargaBeli = 0;
+            totalHargaJual = 0;
             filteredData.forEach(element => {
-                accumulationProfirt += element.keuntungan;
+                // accumulationProfirt += element.keuntungan;
+                totalHargaBeli += element.products.harga_beli * element.jumlah;
+                totalHargaJual += element.products.harga_jual * element.jumlah;
+
                 newLaporans.push({
                     tgl_transaksi: element.transaksi.tgl_transaksi,
                     transaksi_id: element.transaksi_id,
@@ -192,7 +204,9 @@
                 });
             });
 
-            $("#total_keuntungan").val(accumulationProfirt);
+            accumulationProfit = totalHargaJual - totalHargaBeli;
+
+            $("#total_keuntungan").val(accumulationProfit);
             $("#data_laporans").val(JSON.stringify(newLaporans));
 
             $("#exportLaporan").submit();

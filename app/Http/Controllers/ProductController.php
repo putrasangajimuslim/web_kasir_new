@@ -22,7 +22,7 @@ class ProductController extends Controller
         $role = $user->role;
 
         if ($request->ajax()) {
-            $data = Products::orderBy('id', 'desc');
+            $data = Products::orderBy('kode_barang', 'asc');
 
             if ($role == 'admin') {
                 return DataTables::of($data)
@@ -36,9 +36,9 @@ class ProductController extends Controller
                         $edit = '<a href="' . route('products.edit', $row->id) . '" class="btn btn-primary btn-rounded btn-icon-md mr-2" title="Edit"><i class="fas fa-fw fa-edit"></i></a>';
                         $delete = '<a href="#" data-href="' . route('products.destroy', $row->id) . '" class="btn btn-danger btn-rounded btn-icon-md" title="Delete" data-toggle="modal" data-target="#modal-delete" data-key="' . $row->id . '"><i class="fas fa-fw fa-trash"></i></a>';
                         
-                        if (Carbon::parse($row->date_expired)->isPast()) {
-                            return '';
-                        }
+                        // if (Carbon::parse($row->date_expired)->isPast()) {
+                        //     return '';
+                        // }
 
                         return $edit . $delete;
                     })

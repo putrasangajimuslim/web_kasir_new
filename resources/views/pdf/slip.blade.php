@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Transaction Slip</title>
+    <title>Nota Pembayaran</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .border-separator {
@@ -22,7 +22,7 @@
 </head>
 <body>
     <h1 style="text-align: center">Struk Belanja</h1>
-    <p style="text-align: center; font-size: 24px; margin: 0px 0px 2px 0px">Jl.bangka Selatan No.24</p>
+    <p style="text-align: center; font-size: 24px; margin: 0px 0px 2px 0px">Jl.RS Fatmawati Raya No.15, Gandaria Selatan, Cilandak Jaksel</p>
     <p style="text-align: center; font-size: 20px; margin: 0px 0px 2px 0px">{{ $tgl_transaksi }}</p>
 
     <div class="border-separator"></div>
