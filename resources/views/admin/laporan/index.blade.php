@@ -130,14 +130,14 @@
                 }
             },
             columns: [
-                { data: 'transaksi.tgl_transaksi', name: 'transaksi.tgl_transaksi' },
-                { data: 'products.nama_barang', name: 'products.nama_barang' },
-                { data: 'products.stok', name: 'products.stok' },
-                { data: 'jumlah', name: 'jumlah' },
-                { data: 'products.harga_beli', name: 'products.harga_beli' },
+                { data: 'tgl_transaksi', name: 'tgl_transaksi' },
+                { data: 'nama_brg', name: 'nama_brg' },
+                { data: 'total_stok', name: 'total_stok' },
+                { data: 'total_jumlah', name: 'total_jumlah' },
+                { data: 'harga_beli', name: 'harga_beli' },
                 { data: 'harga_jual', name: 'harga_jual' },
-                { data: 'products.date_expired', name: 'products.date_expired' },
-                { data: 'transaksi.kasir.nama', name: 'transaksi.kasir.nama' },
+                { data: 'masa_exp', name: 'masa_exp' },
+                { data: 'name_kasir', name: 'name_kasir' },
             ]
         });
 
@@ -180,27 +180,19 @@
             totalHargaJual = 0;
             filteredData.forEach(element => {
                 // accumulationProfirt += element.keuntungan;
-                totalHargaBeli += element.products.harga_beli * element.jumlah;
-                totalHargaJual += element.products.harga_jual * element.jumlah;
+                totalHargaBeli += element.harga_beli * element.total_jumlah;
+                totalHargaJual += element.harga_jual * element.total_jumlah;
 
                 newLaporans.push({
-                    tgl_transaksi: element.transaksi.tgl_transaksi,
-                    transaksi_id: element.transaksi_id,
+                    tgl_transaksi: element.tgl_transaksi,
                     barang_id: element.barang_id,
-                    nama_barang: element.products.nama_barang,
-                    kode_barang: element.products.kode_barang,
-                    nama_barang: element.products.nama_barang,
-                    stok: element.products.stok,
-                    harga_beli: element.products.harga_beli,
-                    harga_jual: element.products.harga_jual,
-                    merk: element.products.merk,
-                    masa_exp: element.products.date_expired,
-                    jumlah_transaksi: element.jumlah,
-                    subtotal_item: element.subtotal_item,
-                    total_kembalian: element.transaksi.total_kembalian,
-                    total_pembayaran: element.transaksi.total_pembayaran,
-                    kasir_id: element.transaksi.kasir_id,
-                    nama_kasir: element.transaksi.kasir.nama,
+                    harga_beli: element.harga_beli,
+                    harga_jual: element.harga_jual,
+                    masa_exp: element.masa_exp,
+                    nama_barang: element.nama_brg,
+                    nama_kasir: element.name_kasir,
+                    jumlah_transaksi: element.total_jumlah,
+                    stok: element.total_stok,
                 });
             });
 

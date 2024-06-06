@@ -13,7 +13,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-
+use Illuminate\Support\Facades\DB;
 use DataTables;
 
 class LaporanController extends Controller
@@ -24,85 +24,69 @@ class LaporanController extends Controller
             $months[$month] = Carbon::create()->month($month)->format('F');
         }
     
-        // Menghasilkan daftar tahun, misalnya 20 tahun terakhir
+        // Generate a list of years, e.g., the last 20 years
         $years = range(Carbon::now()->year - 20, Carbon::now()->year);
     
+        // Initialize the query for transactions
         $query = Transaksi::where('status_pembayaran', 'Done');
-
+    
+        // Apply filters based on request parameters
         if ($request->has('todayFilter') && $request->todayFilter) {
             $today = Carbon::parse($request->todayFilter)->toDateString();
             $query->whereDate('tgl_transaksi', $today);
         } elseif ($request->has('bulan') && $request->bulan && $request->has('tahun') && $request->tahun) {
             $query->whereMonth('tgl_transaksi', $request->bulan)
-                    ->whereYear('tgl_transaksi', $request->tahun);
+                  ->whereYear('tgl_transaksi', $request->tahun);
         } else {
             $today = Carbon::now()->toDateString();
             $query->whereDate('tgl_transaksi', $today);
         }
-
-        $transaksi = $query->get();
-
-        if ($request->ajax()) {
-            // Jika tidak ada transaksi yang cocok, kembalikan JSON kosong
-            $detailTransaksi = [];
-
-            if (!empty($transaksi)) {
-                $detailTransaksi = DetailTransaksi::whereIn('transaksi_id', $transaksi->pluck('id'))
-                                    ->with(['products' => function($query) {
-                                        $query->withTrashed();
-                                    }, 'transaksi.kasir'])
-                                    ->orderBy('detail_transaksi.id', 'asc')
-                                    ->get();
-
-                // $totalStok= $detailTransaksi->sum(function ($detail) {
-                //     return $detail->products ? $detail->products->stok : 0;
-                // });
-
-                $totalAllStok = $detailTransaksi->sum(function ($detail) {
-                    return $detail->products ? $detail->products->stok : 0;
-                });
-
-                $totalQty= $detailTransaksi->sum(function ($detail) {
-                    return $detail->jumlah ? $detail->jumlah : 0;
-                });
-        
-                $totalHargaBeli = $detailTransaksi->sum(function ($detail) {
-                    $qty = $detail->jumlah;
-                    $total = $detail->products->harga_beli * $qty;
-                    return $total;
-                    // return $detail->products ? $detail->products->harga_beli : 0;
-                });
-        
-                // $totalHargaJual = $detailTransaksi->sum('harga_jual');
-
-                $totalHargaJual = $detailTransaksi->sum(function ($detail) {
-                    $qty = $detail->jumlah;
-                    $total = $detail->harga_jual * $qty;
-                    return $total;
-                    // return $detail->products ? $detail->products->harga_beli : 0;
-                });
-        
-                $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
-
-                $today = Carbon::today();
-
-                $expiredProducts = $detailTransaksi->filter(function ($detail) {
-                    return $detail->products && Carbon::parse($detail->products->date_expired)->isPast();
-                });
-        
-                $totalExpiredValue = $expiredProducts->sum(function ($detail) {
-                    return $detail->products->harga_beli * $detail->products->stok;
-                });
-
-                // $totalKeuntungan = $detailTransaksi->sum('keuntungan');
-            }
     
-            return DataTables::of($detailTransaksi)
-                ->addColumn('tgl_transaksi', function ($detail) {
-                    return Carbon::parse($detail->transaksi->tanggal)->format('Y-m-d');
-                })
+        $transaksi = $query->get();
+        $detailTransaksi = collect();
+    
+        if ($transaksi->isNotEmpty()) {
+            $detailTransaksi = DetailTransaksi::whereIn('transaksi_id', $transaksi->pluck('id'))
+                ->with(['products' => function($query) {
+                    $query->withTrashed();
+                }, 'transaksi.kasir'])
+                ->orderBy('detail_transaksi.id', 'asc')
+                ->get();
+        }
+    
+        // Group the data by barang_id and calculate the totals
+        $groupedData = $detailTransaksi->groupBy('barang_id')->map(function ($items, $barang_id) {
+            $firstItem = $items->first();
+            $product = $firstItem->products;
+            $transaksi = $firstItem->transaksi;
+            $totalJumlah = $items->sum('jumlah');
+    
+            return [
+                'tgl_transaksi' => $transaksi->tgl_transaksi,
+                'name_kasir' => $transaksi->kasir->nama,
+                'barang_id' => $barang_id,
+                'nama_brg' => $product->nama_barang,
+                'harga_beli' => $product->harga_beli,
+                'harga_jual' => $product->harga_jual,
+                'total_jumlah' => $totalJumlah,
+                'total_stok' => $product->stok,
+                'masa_exp' => $product->date_expired,
+            ];
+        })->values();
+    
+        $totalHargaBeli = $groupedData->sum(fn($detail) => $detail['harga_beli'] * $detail['total_jumlah']);
+        $totalHargaJual = $groupedData->sum(fn($detail) => $detail['harga_jual'] * $detail['total_jumlah']);
+        $totalQty = $groupedData->sum('total_jumlah');
+        $totalAllStok = $groupedData->sum('total_stok');
+        $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
+    
+        // Calculate the total value of expired products
+        $expiredProducts = $groupedData->filter(fn($detail) => Carbon::parse($detail['masa_exp'])->isPast());
+        $totalExpiredValue = $expiredProducts->sum(fn($detail) => $detail['harga_beli'] * $detail['total_stok']);
+    
+        if ($request->ajax()) {
+            return DataTables::of($groupedData)
                 ->addIndexColumn()
-                // ->with('totalStok', $totalStok)
                 ->with('totalQty', $totalQty)
                 ->with('totalAllStok', $totalAllStok)
                 ->with('totalHargaBeli', $totalHargaBeli)
@@ -116,7 +100,7 @@ class LaporanController extends Controller
             'months' => $months,
             'years' => $years,
         ]);
-    }    
+    }       
 
     public function exportExcel(Request $request) {
         $tgl_transaksi = $request->tgl_transaksi;
